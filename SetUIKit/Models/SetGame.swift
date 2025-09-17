@@ -55,15 +55,15 @@ struct SetGame {
         let ids = selectedCards.map { $0.id }
         /*DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             ids.forEach { id in
-                if let index = self.cardsOnScreen.firstIndex(where: {
+                if let index = cardsOnScreen.firstIndex(where: {
                     $0.id == id
                 }) {
-                    self.cardsOnScreen[index].isSelected = false
+                    cardsOnScreen[index].isSelected = false
 
                 }
             }
-            self.selectedCards.removeAll()
-            self.isSetValid = nil
+            selectedCards.removeAll()
+            isSetValid = nil
         }*/
     }
 

@@ -11,7 +11,7 @@ class CardView: UIView {
     var card: Card
     private var shapeViews: [UIView] = []
     
-    var onCardSelected: (() -> Void)?
+    var onCardTapped: ((UUID) -> Void)?
 
     init(card: Card, size: CGSize) {
         self.card = card
@@ -28,10 +28,12 @@ class CardView: UIView {
 
     private func setupCardView() {
         self.backgroundColor = .clear
-        self.layer.borderColor = UIColor.black.cgColor
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 8
         self.clipsToBounds = true
+        
+        // Borde inicial en negro (VC luego decide si amarillo o no)
+        self.layer.borderColor = UIColor.black.cgColor
         
         let shapeSpacingRatio: CGFloat = 0.1
         let totalCount = CGFloat(card.count)
@@ -63,6 +65,12 @@ class CardView: UIView {
             shapeViews.append(shapeView)
         }
     }
+    
+    func updateSelection(isSelected: Bool) {
+        UIView.animate(withDuration: 0.3) {
+            self.layer.borderColor = isSelected ? UIColor.yellow.cgColor : UIColor.black.cgColor
+        }
+    }
 
     private func setupTapGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cardTapped))
@@ -71,20 +79,7 @@ class CardView: UIView {
     }
 
     @objc private func cardTapped() {
-        self.card.isSelected.toggle()
-        print("TOCADA: \(card.id)")
-
-        if self.card.isSelected {
-            UIView.animate(withDuration: 0.3) {
-                self.layer.borderColor = UIColor.yellow.cgColor
-            }
-        } else {
-            UIView.animate(withDuration: 0.3) {
-                self.layer.borderColor = UIColor.black.cgColor
-            }
-        }
-
-        onCardSelected?()
-        print("onCardSelected llamado")
+        onCardTapped?(card.id)
     }
+
 }

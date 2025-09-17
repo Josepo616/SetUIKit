@@ -30,6 +30,9 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Shuffle"/>
+                                <connections>
+                                    <action selector="shuffleButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gaA-tZ-JuR"/>
+                                </connections>
                             </button>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t7n-zF-RNf">
                                 <rect key="frame" x="16" y="118" width="361" height="542"/>
