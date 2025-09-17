@@ -32,7 +32,6 @@ class CardView: UIView {
         self.layer.cornerRadius = 8
         self.clipsToBounds = true
         
-        // Borde inicial en negro (VC luego decide si amarillo o no)
         self.layer.borderColor = UIColor.black.cgColor
         
         let shapeSpacingRatio: CGFloat = 0.1

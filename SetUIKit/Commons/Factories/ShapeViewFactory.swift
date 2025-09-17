@@ -5,13 +5,6 @@
 //  Created by JoseAlvarez on 9/16/25.
 //
 
-//
-//  ShapeViewFactory.swift
-//  SetUIKit
-//
-//  Created by JoseAlvarez on 9/16/25.
-//
-
 import UIKit
 
 struct ShapeViewFactory {
@@ -24,7 +17,6 @@ struct ShapeViewFactory {
         let shapeView = UIView(frame: frame)
         shapeView.backgroundColor = .clear
 
-        // Zoom effect: inset del 10%
         let insetRatio: CGFloat = 0.1
         let minSide = min(shapeView.bounds.width, shapeView.bounds.height)
         let zoomedSide = minSide * (1 - insetRatio * 2)
@@ -35,10 +27,8 @@ struct ShapeViewFactory {
             height: zoomedSide
         )
 
-        // Creamos el path con tamaño relativo (sin offset)
         let path = path(for: type, in: drawingRect.size)
 
-        // Outline del shape
         let outlineLayer = CAShapeLayer()
         outlineLayer.path = path.cgPath
         outlineLayer.strokeColor = UIColor.from(cardColor: color).cgColor
@@ -50,7 +40,6 @@ struct ShapeViewFactory {
         outlineLayer.frame = drawingRect
         shapeView.layer.addSublayer(outlineLayer)
 
-        // Relleno striped si aplica
         if shading == .striped {
             let stripesLayer = createStripesLayer(
                 bounds: CGRect(origin: .zero, size: drawingRect.size),
@@ -69,8 +58,6 @@ struct ShapeViewFactory {
         return shapeView
     }
 
-    // MARK: - Shape Path
-
     private static func path(for type: CardType, in size: CGSize) -> UIBezierPath {
         switch type {
         case .square:
@@ -86,8 +73,6 @@ struct ShapeViewFactory {
             return path
         }
     }
-
-    // MARK: - Striped Shading
 
     private static func createStripesLayer(bounds: CGRect, color: UIColor) -> CALayer {
         let stripeLayer = CALayer()

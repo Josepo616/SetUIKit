@@ -12,17 +12,20 @@ class ShapesViewController: UIViewController {
     private var allCards = CardsFactory.makeCards()
     private(set) var cardsRemaining: [Card]
     private(set) var visibleCards: [Card] = []
+
     private var selectedCount = 0
     private let padding: CGFloat = 16
-    private let startedAmount: Int
+    let startedAmount: Int
     private let targetScrollView: UIScrollView
-
+    var gameState: GameState
+    
     init(startedAmount: Int, targetScrollView: UIScrollView) {
         self.startedAmount = startedAmount
         self.targetScrollView = targetScrollView
         visibleCards = Array(allCards.prefix(startedAmount))
         cardsRemaining = Array(allCards)
         cardsRemaining.removeFirst(min(startedAmount, allCards.count))
+        self.gameState = ViewController.gameState
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -32,10 +35,43 @@ class ShapesViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        if gameState == .notStarted {
+            startGame()
+        }
+
         setupCardsGrid()
     }
 
-    private func setupCardsGrid() {
+    override func viewWillTransition(
+        to size: CGSize,
+        with coordinator: UIViewControllerTransitionCoordinator
+    ) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        coordinator.animate(
+            alongsideTransition: { context in
+                UIView.animate(
+                    withDuration: 3.0,
+                    delay: 0,
+                    options: .curveEaseInOut,
+                    animations: {
+                        print("1 game state: \(self.gameState)")
+                        if self.gameState == .started {
+                            print("2 game state: \(self.gameState)")
+
+                            self.setupCardsGrid()
+                        }
+                    },
+                    completion: nil
+                )
+            },
+            completion: { context in
+            }
+        )
+    }
+
+    func setupCardsGrid() {
+
         let scrollView = targetScrollView
         let layout = CardsGridLayout.calculateLayout(
             for: visibleCards.count,
@@ -60,8 +96,14 @@ class ShapesViewController: UIViewController {
         scrollView.contentSize = layout.contentSize
     }
 
-    private func handleCardTap(_ tappedCardID: UUID, in scrollView: UIScrollView) {
-        guard let index = visibleCards.firstIndex(where: { $0.id == tappedCardID }) else { return }
+    private func handleCardTap(
+        _ tappedCardID: UUID,
+        in scrollView: UIScrollView
+    ) {
+        guard
+            let index = visibleCards.firstIndex(where: { $0.id == tappedCardID }
+            )
+        else { return }
 
         var selectedCards = visibleCards.filter { $0.isSelected }
 
@@ -75,7 +117,9 @@ class ShapesViewController: UIViewController {
                 visibleCards.removeAll { selectedIDs.contains($0.id) }
                 addMoreCards()
 
-                if let newIndex = visibleCards.firstIndex(where: { $0.id == tappedID }) {
+                if let newIndex = visibleCards.firstIndex(where: {
+                    $0.id == tappedID
+                }) {
                     visibleCards[newIndex].isSelected = true
                 }
             }
@@ -95,13 +139,18 @@ class ShapesViewController: UIViewController {
         selectedCards = visibleCards.filter { $0.isSelected }
 
         if selectedCards.count == 3 {
-            print(isValidSet(selectedCards) ? "✅ ¡Es un Set!" : "❌ No es un Set.")
+            print(
+                isValidSet(selectedCards) ? "✅ ¡Es un Set!" : "❌ No es un Set."
+            )
         }
 
         if let tappedView = scrollView.subviews
             .compactMap({ $0 as? CardView })
-            .first(where: { $0.card.id == tappedCardID }) {
-            tappedView.updateSelection(isSelected: visibleCards[index].isSelected)
+            .first(where: { $0.card.id == tappedCardID })
+        {
+            tappedView.updateSelection(
+                isSelected: visibleCards[index].isSelected
+            )
         }
     }
 
@@ -141,7 +190,7 @@ class ShapesViewController: UIViewController {
 
     func shuffleCards() {
         visibleCards.shuffle()
-        setupCardsGrid()
+        self.setupCardsGrid()
     }
 
     private func isValidSet(_ cards: [Card]) -> Bool {
@@ -152,8 +201,31 @@ class ShapesViewController: UIViewController {
             && Self.allSameOrAllDifferent(cards.map { $0.count })
     }
 
-    private static func allSameOrAllDifferent<T: Hashable>(_ values: [T]) -> Bool {
+    private static func allSameOrAllDifferent<T: Hashable>(_ values: [T])
+        -> Bool
+    {
         let unique = Set(values)
         return unique.count == 1 || unique.count == 3
     }
+
+    func startGame() {
+        gameState = .started
+        print("Juego iniciado")
+    }
+
+    func pauseGame() {
+        gameState = .paused
+        print("Juego pausado")
+    }
+
+    func endGame() {
+        gameState = .lost
+        print("Juego perdido")
+    }
+
+    func completeGame() {
+        gameState = .completed
+        print("Juego completado")
+    }
+
 }
