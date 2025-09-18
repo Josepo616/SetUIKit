@@ -7,40 +7,40 @@
 
 import UIKit
 
-class ViewController: UIViewController {
-
+class MainViewController: UIViewController, ShapesViewControllerDelegate {
+    
     @IBOutlet weak var newGameButton: UIButton!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var moreCardsButton: UIButton!
     @IBOutlet weak var shuffleButton: UIButton!
-    static var gameState: GameState = .notStarted
-
+    @IBOutlet weak var scoreLabel: UILabel!
     private var shapesVC: ShapesViewController?
+    private var currentGameState: GameState = .notStarted
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        startNewGame(self)
         moreCardsButton.isHidden = true
     }
 
     @IBAction func startNewGame(_ sender: Any) {
-        ViewController.gameState = .started
-        
         for child in children {
             child.willMove(toParent: nil)
             child.view.removeFromSuperview()
             child.removeFromParent()
         }
-
         let newShapesVC = ShapesViewController(
             startedAmount: 12,
-            targetScrollView: scrollView
+            targetScrollView: scrollView,
+            gameState: currentGameState
         )
+        newShapesVC.gameLogic.setupCardsGrid()
+        newShapesVC.gameLogic.delegate = self
         addChild(newShapesVC)
         newShapesVC.didMove(toParent: self)
         self.moreCardsButton.isHidden = false
         self.shapesVC = newShapesVC
+        scoreLabel.text = "Score: 0"
+
     }
 
     @IBAction func addMoreCards(_ sender: Any) {
@@ -55,7 +55,22 @@ class ViewController: UIViewController {
     func updateMoreCardsButtonVisitability() {
         guard let shapesVC = shapesVC else { return }
 
-        let noCardsRemaining = shapesVC.cardsRemaining.isEmpty
+        let noCardsRemaining = shapesVC.gameLogic.cardsRemaining.isEmpty
         moreCardsButton.isHidden = noCardsRemaining
+    }
+    
+    func didUpdateScore(to score: Int) {
+        scoreLabel.text = "Score: \(score)"
+    }
+    
+    func gameDidStart(to gameState: GameState) {
+        currentGameState = gameState
+    }
+    
+    func didRotationHappened(to hasRotated: Bool) {
+        if ((shapesVC?.hasRotated) != nil) && (shapesVC?.gameState == .started){
+            shapesVC?.gameLogic.setupCardsGrid()
+            shapesVC?.hasRotated = false
+        }
     }
 }

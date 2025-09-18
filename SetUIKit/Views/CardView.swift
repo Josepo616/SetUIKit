@@ -67,7 +67,7 @@ class CardView: UIView {
     
     func updateSelection(isSelected: Bool) {
         UIView.animate(withDuration: 0.3) {
-            self.layer.borderColor = isSelected ? UIColor.yellow.cgColor : UIColor.black.cgColor
+            self.layer.borderColor = isSelected ? UIColor.green.cgColor : UIColor.black.cgColor
         }
     }
 

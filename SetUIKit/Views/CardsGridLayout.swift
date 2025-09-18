@@ -75,19 +75,17 @@ struct CardsGridLayout {
 }
 
 class CardsGridViewController: UIViewController {
-    var cardCount = 30 // Cambia esto para probar con más o menos cartas.
+    var cardCount = 30
     var gridLayout: CardsGridLayout?
     var scrollView: UIScrollView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Crear el ScrollView
         scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
 
-        // Configurar las restricciones del ScrollView
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -95,16 +93,13 @@ class CardsGridViewController: UIViewController {
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
-        // Calcular el layout de la cuadrícula
         let size = view.bounds.size
         gridLayout = CardsGridLayout.calculateLayout(for: cardCount, in: size, padding: 10)
 
-        // Crear la vista que contendrá las cartas
         let gridView = UIView()
         scrollView.addSubview(gridView)
         gridView.translatesAutoresizingMaskIntoConstraints = false
 
-        // Configurar las restricciones del gridView
         NSLayoutConstraint.activate([
             gridView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             gridView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
@@ -113,17 +108,15 @@ class CardsGridViewController: UIViewController {
             gridView.widthAnchor.constraint(equalTo: scrollView.widthAnchor) // Mantener el ancho fijo
         ])
 
-        // Actualizar el contentSize del scrollView
         if let contentSize = gridLayout?.contentSize {
             scrollView.contentSize = contentSize
         }
 
-        // Crear las cartas dentro del grid
         for i in 0..<cardCount {
             let cardFrame = gridLayout?.frameForCard(at: i) ?? CGRect.zero
             let cardView = UIView(frame: cardFrame)
             cardView.frame = cardFrame
-            cardView.backgroundColor = .blue // Puedes cambiar esto por la vista de la carta
+            cardView.backgroundColor = .blue 
             cardView.layer.cornerRadius = 8
             gridView.addSubview(cardView)
         }
