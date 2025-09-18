@@ -14,7 +14,7 @@ class MainViewController: UIViewController, ShapesViewControllerDelegate {
     @IBOutlet weak var moreCardsButton: UIButton!
     @IBOutlet weak var shuffleButton: UIButton!
     @IBOutlet weak var scoreLabel: UILabel!
-    private var shapesVC: ShapesViewController?
+    private var shapesVC: SetGameViewController?
     private var currentGameState: GameState = .notStarted
     
     override func viewDidLoad() {
@@ -28,7 +28,7 @@ class MainViewController: UIViewController, ShapesViewControllerDelegate {
             child.view.removeFromSuperview()
             child.removeFromParent()
         }
-        let newShapesVC = ShapesViewController(
+        let newShapesVC = SetGameViewController(
             startedAmount: 12,
             targetScrollView: scrollView,
             gameState: currentGameState

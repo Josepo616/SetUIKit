@@ -1,5 +1,5 @@
 //
-//  ShapesViewController.swift
+//  SetGameViewController.swift
 //  SetUIKit
 //
 //  Created by JoseAlvarez on 9/16/25.
@@ -7,20 +7,20 @@
 
 import UIKit
 
-class ShapesViewController: UIViewController {
+class SetGameViewController: UIViewController {
 
     private let targetScrollView: UIScrollView
     private var selectedCount = 0
     let startedAmount: Int
     var gameState: GameState
-    var gameLogic: GameLogicProtocol
+    var gameLogic: SetGameLogic
     var hasRotated = false
 
     init(startedAmount: Int, targetScrollView: UIScrollView, gameState: GameState = .notStarted) {
         self.startedAmount = startedAmount
         let allCards = CardsFactory.makeCards()
         self.targetScrollView = targetScrollView
-        self.gameLogic = GameLogic(
+        self.gameLogic = SetGameLogic(
             startedAmount: startedAmount,
             allCards: allCards,
             targetScrollView: targetScrollView

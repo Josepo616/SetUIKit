@@ -19,6 +19,6 @@ struct CardsFactory {
                 }
             }
         }
-        return deck
+        return deck.shuffled()
     }
 }

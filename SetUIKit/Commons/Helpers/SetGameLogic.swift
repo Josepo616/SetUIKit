@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class GameLogic: GameLogicProtocol {
+class SetGameLogic {
 
     private(set) var cardsRemaining: [Card]
     private(set) var validSet: Bool = false
