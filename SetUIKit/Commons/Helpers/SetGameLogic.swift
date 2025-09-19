@@ -10,10 +10,11 @@ import UIKit
 
 class SetGameLogic {
 
+    private let targetScrollView: UIScrollView
     private(set) var cardsRemaining: [Card]
     private(set) var validSet: Bool = false
     private(set) var score: Int = 0
-    private let targetScrollView: UIScrollView
+    private var cardViewsByID: [UUID: CardView] = [:]
     weak var delegate: ShapesViewControllerDelegate?
     var visibleCards: [Card]
 
@@ -41,33 +42,45 @@ class SetGameLogic {
         else { return }
 
         var selectedCards = visibleCards.filter { $0.isSelected }
+
         if selectedCards.count == 3 && !visibleCards[index].isSelected {
             if !isValidSet(selectedCards) {
-                deselectAll()
-                visibleCards[index].isSelected = true
                 validSet = false
+                showAlert()
                 updateScore()
-            } else {
-                let tappedID = tappedCardID
-                let selectedIDs = Set(selectedCards.map { $0.id })
-                visibleCards.removeAll { selectedIDs.contains($0.id) }
-                addMoreCards()
-                if let newIndex = visibleCards.firstIndex(where: {
-                    $0.id == tappedID
-                }) {
-                    visibleCards[newIndex].isSelected = true
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    self.deselectAll()
+                    self.visibleCards[index].isSelected = true
+                    self.setupCardsGrid()
                 }
+            } else {
                 validSet = true
+                showAlert()
                 updateScore()
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    let selectedIDs = Set(selectedCards.map { $0.id })
+                    self.visibleCards.removeAll { selectedIDs.contains($0.id) }
+                    self.addMoreCards()
+
+                    if let newIndex = self.visibleCards.firstIndex(where: {
+                        $0.id == tappedCardID
+                    }) {
+                        self.visibleCards[newIndex].isSelected = true
+                    }
+                    self.setupCardsGrid()
+                }
             }
-            setupCardsGrid()
             return
         }
+
         if visibleCards[index].isSelected {
             visibleCards[index].isSelected = false
         } else if selectedCards.count < 3 {
             visibleCards[index].isSelected = true
         }
+
         selectedCards = visibleCards.filter { $0.isSelected }
         if let tappedView = scrollView.subviews
             .compactMap({ $0 as? CardView })
@@ -87,6 +100,7 @@ class SetGameLogic {
             padding: 16
         )
         scrollView.subviews.forEach { $0.removeFromSuperview() }
+        cardViewsByID.removeAll()
         for (index, card) in visibleCards.enumerated() {
             let frame = layout.frameForCard(at: index)
             let cardView = CardView(card: card, size: frame.size)
@@ -96,12 +110,9 @@ class SetGameLogic {
             }
             cardView.updateSelection(isSelected: card.isSelected)
             scrollView.addSubview(cardView)
+            cardViewsByID[card.id] = cardView
         }
-        if let contentSize = layout.contentSize {
-            scrollView.contentSize = contentSize
-        } else {
-            scrollView.contentSize = .zero
-        }
+        scrollView.contentSize = layout.contentSize ?? .zero
     }
 
     func deselectAll() {
@@ -137,6 +148,21 @@ class SetGameLogic {
     private func updateScore() {
         score += validSet ? 3 : -1
         delegate?.didUpdateScore(to: score)
+    }
+
+    private func showAlert() {
+        for card in visibleCards {
+            guard let cardView = cardViewsByID[card.id] else { continue }
+            if card.isSelected {
+                UIView.animate(withDuration: 0.3) {
+                    cardView.layer.borderColor =
+                    self.validSet
+                    ? UIColor.green.cgColor
+                    : UIColor.red.cgColor
+                    cardView.layer.borderWidth = 3
+                }
+            }
+        }
     }
 
     private func allSameOrAllDifferent<T: Hashable>(_ values: [T]) -> Bool {
