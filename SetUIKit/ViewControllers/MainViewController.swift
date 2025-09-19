@@ -21,16 +21,15 @@ class MainViewController: UIViewController, GameViewControllerDelegate {
         super.viewDidLoad()
         moreCardsButton.isHidden = true
     }
+    
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-
         guard let previousTraitCollection = previousTraitCollection else { return }
 
         if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
             shapesVC?.gameLogic.setupCardsGrid()
         }
     }
-
 
     @IBAction func startNewGame(_ sender: Any) {
         for child in children {
@@ -55,18 +54,14 @@ class MainViewController: UIViewController, GameViewControllerDelegate {
 
     @IBAction func addMoreCards(_ sender: Any) {
         shapesVC?.addMoreCards()
-        updateMoreCardsButtonVisitability()
     }
 
     @IBAction func shuffleButtonAction(_ sender: Any) {
         shapesVC?.shuffleCards()
     }
 
-    func updateMoreCardsButtonVisitability() {
-        guard let shapesVC = shapesVC else { return }
-
-        let noCardsRemaining = shapesVC.gameLogic.cardsRemaining.isEmpty
-        moreCardsButton.isHidden = noCardsRemaining
+    func didCardsRemainingOver(to shouldHidden: Bool) {
+        moreCardsButton.isHidden = shouldHidden
     }
     
     func didUpdateScore(to score: Int) {

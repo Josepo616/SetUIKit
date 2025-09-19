@@ -16,6 +16,7 @@ class SetGameLogic {
     private var cardViewsByID: [UUID: CardView] = [:]
     weak var delegate: GameViewControllerDelegate?
     var visibleCards: [Card]
+    var shouldHiddeButton: Bool = true
 
     init(startedAmount: Int, allCards: [Card], targetScrollView: UIScrollView) {
         self.visibleCards = Array(allCards.prefix(startedAmount))
@@ -40,7 +41,6 @@ class SetGameLogic {
             let index = visibleCards.firstIndex(where: { $0.id == tappedCardID }
             )
         else { return }
-
         var selectedCards = visibleCards.filter { $0.isSelected }
         if selectedCards.count == 3 && !visibleCards[index].isSelected {
             if !isValidSet(selectedCards) {
@@ -165,6 +165,9 @@ class SetGameLogic {
         }
         visibleCards.append(contentsOf: cardsToAdd)
         cardsRemaining.removeFirst(min(count, cardsRemaining.count))
+        if cardsRemaining.isEmpty {
+            self.delegate?.didCardsRemainingOver(to: self.shouldHiddeButton)
+        }
     }
 
     private func updateScore() {
