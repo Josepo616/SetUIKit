@@ -49,7 +49,7 @@ class SetGameLogic {
                 showAlert()
                 updateScore()
 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     self.deselectAll()
                     self.visibleCards[index].isSelected = true
                     self.setupCardsGrid()
@@ -59,7 +59,7 @@ class SetGameLogic {
                 showAlert()
                 updateScore()
 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     let selectedIDs = Set(selectedCards.map { $0.id })
                     self.visibleCards.removeAll { selectedIDs.contains($0.id) }
                     self.addMoreCards()
@@ -89,6 +89,20 @@ class SetGameLogic {
             tappedView.updateSelection(
                 isSelected: visibleCards[index].isSelected
             )
+        }
+    }
+
+    func evaluateSelectedCards(onValid: () -> Void, onInvalid: () -> Void) {
+        let selectedCards = visibleCards.filter { $0.isSelected }
+        if selectedCards.count == 3 {
+            if isValidSet(selectedCards) {
+                let selectedIDs = Set(selectedCards.map { $0.id })
+                visibleCards.removeAll { selectedIDs.contains($0.id) }
+                onValid()
+            } else {
+                deselectAll()
+                onInvalid()
+            }
         }
     }
 
@@ -124,13 +138,30 @@ class SetGameLogic {
     func addMoreCards(count: Int = 3) {
         let selectedCards = visibleCards.filter { $0.isSelected }
         if selectedCards.count == 3 {
-            if isValidSet(selectedCards) {
-                let selectedIDs = Set(selectedCards.map { $0.id })
-                visibleCards.removeAll { selectedIDs.contains($0.id) }
-            } else {
-                deselectAll()
+            self.validSet = isValidSet(selectedCards)
+            showAlert()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                if self.validSet {
+                    let selectedIDs = Set(selectedCards.map { $0.id })
+                    self.visibleCards.removeAll { selectedIDs.contains($0.id) }
+                } else {
+                    self.deselectAll()
+                }
+                self.addCards(count: count)
+                self.setupCardsGrid()
+                self.updateScore()
             }
+        } else {
+            addCards(count: count)
+            self.setupCardsGrid()
         }
+    }
+
+    func shuffleVisibleCards() {
+        visibleCards.shuffle()
+    }
+
+    private func addCards(count: Int) {
         cardsRemaining.removeAll { card in
             visibleCards.contains(where: { $0.id == card.id })
         }
@@ -141,25 +172,25 @@ class SetGameLogic {
         cardsRemaining.removeFirst(min(count, cardsRemaining.count))
     }
 
-    func shuffleVisibleCards() {
-        visibleCards.shuffle()
-    }
-
     private func updateScore() {
         score += validSet ? 3 : -1
         delegate?.didUpdateScore(to: score)
     }
 
     private func showAlert() {
-        for card in visibleCards {
-            guard let cardView = cardViewsByID[card.id] else { continue }
-            if card.isSelected {
-                UIView.animate(withDuration: 0.3) {
-                    cardView.layer.borderColor =
-                    self.validSet
-                    ? UIColor.green.cgColor
-                    : UIColor.red.cgColor
+        DispatchQueue.main.async {
+            for card in self.visibleCards {
+                guard let cardView = self.cardViewsByID[card.id] else {
+                    continue
+                }
+                if card.isSelected {
+                    let color = self.validSet ? UIColor.green : UIColor.red
+                    cardView.layer.borderColor = color.cgColor
                     cardView.layer.borderWidth = 3
+                    UIView.animate(withDuration: 0.3) {
+                        cardView.alpha = 0.9
+                        cardView.alpha = 1.0
+                    }
                 }
             }
         }
