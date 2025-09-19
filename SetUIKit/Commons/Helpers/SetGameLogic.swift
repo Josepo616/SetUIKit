@@ -5,7 +5,6 @@
 //  Created by JoseAlvarez on 9/18/25.
 //
 
-import Foundation
 import UIKit
 
 class SetGameLogic {
@@ -15,7 +14,7 @@ class SetGameLogic {
     private(set) var validSet: Bool = false
     private(set) var score: Int = 0
     private var cardViewsByID: [UUID: CardView] = [:]
-    weak var delegate: ShapesViewControllerDelegate?
+    weak var delegate: GameViewControllerDelegate?
     var visibleCards: [Card]
 
     init(startedAmount: Int, allCards: [Card], targetScrollView: UIScrollView) {

@@ -31,7 +31,6 @@ class CardView: UIView {
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 8
         self.clipsToBounds = true
-
         self.layer.borderColor = UIColor.black.cgColor
 
         let shapeSpacingRatio: CGFloat = 0.1

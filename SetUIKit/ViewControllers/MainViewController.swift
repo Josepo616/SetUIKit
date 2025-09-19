@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainViewController: UIViewController, ShapesViewControllerDelegate {
+class MainViewController: UIViewController, GameViewControllerDelegate {
     
     @IBOutlet weak var newGameButton: UIButton!
     @IBOutlet weak var scrollView: UIScrollView!

@@ -5,7 +5,7 @@
 //  Created by JoseAlvarez on 9/15/25.
 //
 
-import Foundation
+import UIKit
 
 struct Card: Identifiable, Equatable {
     let id: UUID
@@ -19,3 +19,4 @@ struct Card: Identifiable, Equatable {
     var isVisible: Bool = true
     var position: CGPoint?
 }
+
