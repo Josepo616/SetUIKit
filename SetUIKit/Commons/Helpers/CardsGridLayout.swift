@@ -13,6 +13,7 @@ struct CardsGridLayout {
     let rows: Int
     let padding: CGFloat
     let totalCards: Int
+    let isScrollable: Bool
 
     func frameForCard(at index: Int) -> CGRect {
         let row = index / columns
@@ -29,7 +30,7 @@ struct CardsGridLayout {
         )
     }
 
-    var contentSize: CGSize {
+    var contentSize: CGSize? {
         let height = CGFloat(rows) * (cardSize.height + padding) + padding
         return CGSize(
             width: CGFloat(columns) * (cardSize.width + padding) + padding,
@@ -53,23 +54,32 @@ struct CardsGridLayout {
         let availableWidth = size.width - totalHorizontalPadding
         let cardWidth = availableWidth / CGFloat(columns)
 
-        let totalVerticalPadding = CGFloat(rows + 1) * padding
-        let availableHeight = size.height - totalVerticalPadding
-        var cardHeight = availableHeight / CGFloat(rows)
+        let isScrollable = cardCount >= 30
 
-        let maxAspectRatio: CGFloat = 2.0
-        if cardHeight / cardWidth > maxAspectRatio {
-            cardHeight = cardWidth * maxAspectRatio
+        var cardHeight: CGFloat
+
+        if isScrollable {
+            cardHeight = cardWidth * 1.5
+        } else {
+            let totalVerticalPadding = CGFloat(rows + 1) * padding
+            let availableHeight = size.height - totalVerticalPadding
+            cardHeight = availableHeight / CGFloat(rows)
+
+            let maxAspectRatio: CGFloat = 2.0
+            if cardHeight / cardWidth > maxAspectRatio {
+                cardHeight = cardWidth * maxAspectRatio
+            }
         }
 
         let cardSize = CGSize(width: cardWidth, height: cardHeight)
-
+        
         return CardsGridLayout(
             cardSize: cardSize,
             columns: columns,
             rows: rows,
             padding: padding,
-            totalCards: cardCount
+            totalCards: cardCount,
+            isScrollable: isScrollable
         )
     }
 }
@@ -77,7 +87,7 @@ struct CardsGridLayout {
 class CardsGridViewController: UIViewController {
     var cardCount = 30
     var gridLayout: CardsGridLayout?
-    var scrollView: UIScrollView!
+    var scrollView = UIScrollView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,11 +100,27 @@ class CardsGridViewController: UIViewController {
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
 
         let size = view.bounds.size
-        gridLayout = CardsGridLayout.calculateLayout(for: cardCount, in: size, padding: 10)
+
+        gridLayout = CardsGridLayout.calculateLayout(
+            for: cardCount,
+            in: size,
+            padding: 10
+        )
+
+        if let layout = gridLayout {
+            if layout.isScrollable {
+                scrollView.isScrollEnabled = true
+                if let contentSize = layout.contentSize {
+                    scrollView.contentSize = contentSize
+                }
+            } else {
+                scrollView.isScrollEnabled = false
+            }
+        }
 
         let gridView = UIView()
         scrollView.addSubview(gridView)
@@ -105,18 +131,13 @@ class CardsGridViewController: UIViewController {
             gridView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             gridView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             gridView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            gridView.widthAnchor.constraint(equalTo: scrollView.widthAnchor) // Mantener el ancho fijo
+            gridView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
         ])
-
-        if let contentSize = gridLayout?.contentSize {
-            scrollView.contentSize = contentSize
-        }
 
         for i in 0..<cardCount {
             let cardFrame = gridLayout?.frameForCard(at: i) ?? CGRect.zero
             let cardView = UIView(frame: cardFrame)
-            cardView.frame = cardFrame
-            cardView.backgroundColor = .blue 
+            cardView.backgroundColor = .blue
             cardView.layer.cornerRadius = 8
             gridView.addSubview(cardView)
         }

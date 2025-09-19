@@ -50,7 +50,6 @@ class SetGameViewController: UIViewController {
         coordinator.animate(alongsideTransition: { _ in
             self.hasRotated = true
             self.gameLogic.delegate?.didRotationHappened(to: self.hasRotated)
-            print(self.hasRotated)
         })
     }
 

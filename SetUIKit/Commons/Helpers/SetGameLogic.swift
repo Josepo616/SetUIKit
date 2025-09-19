@@ -97,7 +97,11 @@ class SetGameLogic {
             cardView.updateSelection(isSelected: card.isSelected)
             scrollView.addSubview(cardView)
         }
-        scrollView.contentSize = layout.contentSize
+        if let contentSize = layout.contentSize {
+            scrollView.contentSize = contentSize
+        } else {
+            scrollView.contentSize = .zero
+        }
     }
 
     func deselectAll() {

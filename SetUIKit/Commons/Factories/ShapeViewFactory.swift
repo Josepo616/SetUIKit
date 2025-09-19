@@ -7,8 +7,6 @@
 
 import UIKit
 
-// MARK: - ShapeView Factory
-
 struct ShapeViewFactory {
 
     static func createShapeView(
