@@ -30,19 +30,11 @@ class SetGameViewController: UIViewController {
         )
         self.gameState = gameState
         super.init(nibName: nil, bundle: nil)
+        self.startGame()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        if gameState == .notStarted {
-            startGame()
-            gameLogic.delegate?.gameDidStart(to: gameState)
-            gameLogic.setupCardsGrid()
-        }
     }
 
     override func viewWillTransition(
@@ -65,6 +57,8 @@ class SetGameViewController: UIViewController {
 
     func startGame() {
         gameState = .started
+        gameLogic.delegate?.gameDidStart(to: gameState)
+
     }
 
     func pauseGame() {
