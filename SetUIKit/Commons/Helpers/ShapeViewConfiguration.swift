@@ -17,7 +17,6 @@ struct ShapeViewConfiguration {
             for: shapeView,
             configuration: configuration
         )
-
         let outlineLayer = createOutlineLayer(
             for: configuration.type,
             in: drawingRect,
@@ -25,19 +24,16 @@ struct ShapeViewConfiguration {
             shading: configuration.shading
         )
         shapeView.layer.addSublayer(outlineLayer)
-
         if configuration.shading == .striped {
             let stripesLayer = createStripesLayer(
                 bounds: CGRect(origin: .zero, size: drawingRect.size),
                 color: UIColor.from(cardColor: configuration.color)
             )
             stripesLayer.frame = drawingRect
-
             let maskLayer = CAShapeLayer()
             maskLayer.path = outlineLayer.path
             maskLayer.frame = CGRect(origin: .zero, size: drawingRect.size)
             stripesLayer.mask = maskLayer
-
             shapeView.layer.addSublayer(stripesLayer)
         }
     }
@@ -101,7 +97,6 @@ struct ShapeViewConfiguration {
     {
         let stripeLayer = CALayer()
         stripeLayer.frame = bounds
-
         for i in stride(from: 0, to: Int(bounds.width), by: 6) {
             let line = CALayer()
             line.backgroundColor = color.withAlphaComponent(0.5).cgColor
@@ -113,7 +108,6 @@ struct ShapeViewConfiguration {
             )
             stripeLayer.addSublayer(line)
         }
-
         return stripeLayer
     }
 }

@@ -14,7 +14,15 @@ struct CardsFactory {
             for color in CardColor.allCases {
                 for shading in CardShading.allCases {
                     for count in 1...3 {
-                        deck.append(Card(id: UUID(), type: type, color: color, shading: shading, count: count))
+                        deck.append(
+                            Card(
+                                id: UUID(),
+                                type: type,
+                                color: color,
+                                shading: shading,
+                                count: count
+                            )
+                        )
                     }
                 }
             }

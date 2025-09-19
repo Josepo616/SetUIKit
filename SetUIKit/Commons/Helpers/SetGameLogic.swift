@@ -23,6 +23,7 @@ class SetGameLogic {
         self.targetScrollView = targetScrollView
     }
 
+    // MARK: - Game rules
     func isValidSet(_ cards: [Card]) -> Bool {
         guard cards.count == 3 else { return false }
         return allSameOrAllDifferent(cards.map { $0.type })
@@ -41,13 +42,11 @@ class SetGameLogic {
         else { return }
 
         var selectedCards = visibleCards.filter { $0.isSelected }
-
         if selectedCards.count == 3 && !visibleCards[index].isSelected {
             if !isValidSet(selectedCards) {
                 validSet = false
                 showAlert()
                 updateScore()
-
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     self.deselectAll()
                     self.visibleCards[index].isSelected = true
@@ -57,12 +56,10 @@ class SetGameLogic {
                 validSet = true
                 showAlert()
                 updateScore()
-
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     let selectedIDs = Set(selectedCards.map { $0.id })
                     self.visibleCards.removeAll { selectedIDs.contains($0.id) }
                     self.addMoreCards()
-
                     if let newIndex = self.visibleCards.firstIndex(where: {
                         $0.id == tappedCardID
                     }) {
@@ -73,13 +70,11 @@ class SetGameLogic {
             }
             return
         }
-
         if visibleCards[index].isSelected {
             visibleCards[index].isSelected = false
         } else if selectedCards.count < 3 {
             visibleCards[index].isSelected = true
         }
-
         selectedCards = visibleCards.filter { $0.isSelected }
         if let tappedView = scrollView.subviews
             .compactMap({ $0 as? CardView })
@@ -160,6 +155,7 @@ class SetGameLogic {
         visibleCards.shuffle()
     }
 
+    // MARK: - Private Helper Methods
     private func addCards(count: Int) {
         cardsRemaining.removeAll { card in
             visibleCards.contains(where: { $0.id == card.id })
@@ -195,6 +191,7 @@ class SetGameLogic {
         }
     }
 
+    // MARK: - Utility Method for Set Validation
     private func allSameOrAllDifferent<T: Hashable>(_ values: [T]) -> Bool {
         let unique = Set(values)
         return unique.count == 1 || unique.count == 3

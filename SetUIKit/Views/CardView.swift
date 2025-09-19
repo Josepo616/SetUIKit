@@ -8,15 +8,14 @@
 import UIKit
 
 class CardView: UIView {
-    var card: Card
+    
     private var shapeViews: [UIView] = []
-
+    var card: Card
     var onCardTapped: ((UUID) -> Void)?
 
     init(card: Card, size: CGSize) {
         self.card = card
         super.init(frame: .zero)
-
         self.frame.size = size
         self.setupCardView()
         self.setupTapGesture()
@@ -32,19 +31,15 @@ class CardView: UIView {
         self.layer.cornerRadius = 8
         self.clipsToBounds = true
         self.layer.borderColor = UIColor.black.cgColor
-
         let shapeSpacingRatio: CGFloat = 0.1
         let totalCount = CGFloat(card.count)
         let baseUnit = totalCount + (totalCount - 1) * shapeSpacingRatio
-
         let shapeHeight = self.frame.height / baseUnit
         let shapeSpacing = shapeHeight * shapeSpacingRatio
         let shapeWidth = min(self.frame.width * 0.8, self.frame.width - 8)
-
         let totalHeight =
             totalCount * shapeHeight + (totalCount - 1) * shapeSpacing
         let startY = max((self.frame.height - totalHeight) / 2, 0)
-
         for i in 0..<card.count {
             let shapeY = startY + CGFloat(i) * (shapeHeight + shapeSpacing)
             let shapeFrame = CGRect(
@@ -53,7 +48,6 @@ class CardView: UIView {
                 width: shapeWidth,
                 height: shapeHeight
             )
-
             let shapeView = ShapeViewFactory.createShapeView(
                 with: Shape(
                     type: card.type,
@@ -86,5 +80,4 @@ class CardView: UIView {
     @objc private func cardTapped() {
         onCardTapped?(card.id)
     }
-
 }

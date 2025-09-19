@@ -50,8 +50,8 @@
                                     <action selector="addMoreCards:" destination="BYZ-38-t0r" eventType="touchUpInside" id="yU7-wO-7mc"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1sL-de-6bZ">
-                                <rect key="frame" x="279" y="710" width="73" height="69"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1sL-de-6bZ">
+                                <rect key="frame" x="269" y="684" width="73" height="69"/>
                                 <attributedString key="attributedText">
                                     <fragment content="Score">
                                         <attributes>
