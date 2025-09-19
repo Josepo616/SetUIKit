@@ -10,13 +10,16 @@ import UIKit
 class SetGameViewController: UIViewController {
 
     private let targetScrollView: UIScrollView
-    private var selectedCount = 0
     let startedAmount: Int
     var gameState: GameState
     var gameLogic: SetGameLogic
     var hasRotated = false
 
-    init(startedAmount: Int, targetScrollView: UIScrollView, gameState: GameState = .notStarted) {
+    init(
+        startedAmount: Int,
+        targetScrollView: UIScrollView,
+        gameState: GameState = .notStarted
+    ) {
         self.startedAmount = startedAmount
         let allCards = CardsFactory.makeCards()
         self.targetScrollView = targetScrollView

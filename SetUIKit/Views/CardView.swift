@@ -8,7 +8,7 @@
 import UIKit
 
 class CardView: UIView {
-    
+
     private var shapeViews: [UIView] = []
     var card: Card
     var onCardTapped: ((UUID) -> Void)?
@@ -53,8 +53,9 @@ class CardView: UIView {
                     type: card.type,
                     color: card.color,
                     shading: card.shading,
-                    frame: shapeFrame
+                    frame: shapeFrame,
                 ),
+                count: 3,
             )
             self.addSubview(shapeView)
             shapeViews.append(shapeView)

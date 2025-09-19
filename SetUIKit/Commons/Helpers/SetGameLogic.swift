@@ -45,7 +45,7 @@ class SetGameLogic {
         if selectedCards.count == 3 && !visibleCards[index].isSelected {
             if !isValidSet(selectedCards) {
                 validSet = false
-                showAlert()
+                showAlertEvaluationCard()
                 updateScore()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     self.deselectAll()
@@ -54,7 +54,7 @@ class SetGameLogic {
                 }
             } else {
                 validSet = true
-                showAlert()
+                showAlertEvaluationCard()
                 updateScore()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     let selectedIDs = Set(selectedCards.map { $0.id })
@@ -133,7 +133,7 @@ class SetGameLogic {
         let selectedCards = visibleCards.filter { $0.isSelected }
         if selectedCards.count == 3 {
             self.validSet = isValidSet(selectedCards)
-            showAlert()
+            showAlertEvaluationCard()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 if self.validSet {
                     let selectedIDs = Set(selectedCards.map { $0.id })
@@ -172,7 +172,7 @@ class SetGameLogic {
         delegate?.didUpdateScore(to: score)
     }
 
-    private func showAlert() {
+    private func showAlertEvaluationCard() {
         DispatchQueue.main.async {
             for card in self.visibleCards {
                 guard let cardView = self.cardViewsByID[card.id] else {

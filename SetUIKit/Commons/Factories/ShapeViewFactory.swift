@@ -9,12 +9,20 @@ import UIKit
 
 struct ShapeViewFactory {
 
-    static func createShapeView(
-        with configuration: Shape
-    ) -> UIView {
-        let shapeView = UIView(frame: configuration.frame)
+    static func createShapeView(with shape: Shape, count: Int) -> UIView {
+        let shapeView = UIView(frame: shape.frame)
         shapeView.backgroundColor = .clear
-        ShapeViewConfiguration.configure(shapeView, with: configuration)
+        shapeView.subviews.forEach {
+            $0.removeFromSuperview()
+        }
+        let label = UILabel(frame: shapeView.bounds)
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.attributedText = ShapeViewConfiguration.attributedText(
+            for: shape,
+            count: count
+        )
+        shapeView.addSubview(label)
         return shapeView
     }
 }
