@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Main View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="SetUIKit" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" autoresizesSubviews="NO" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t7n-zF-RNf">
+                                <rect key="frame" x="16" y="118" width="361" height="558"/>
+                                <viewLayoutGuide key="contentLayoutGuide" id="Agn-Tr-66K"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="UC3-n2-pdn"/>
+                            </scrollView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="Nkr-li-hsP">
+                                <rect key="frame" x="144" y="707" width="105.33333333333331" height="75.666666666666629"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SOG-SW-dFs">
+                                        <rect key="frame" x="0.0" y="0.0" width="105.33333333333333" height="34.333333333333336"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="New game"/>
+                                        <connections>
+                                            <action selector="startNewGame:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cU3-9K-44K"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R0R-hn-oYj">
+                                        <rect key="frame" x="0.0" y="41.333333333333371" width="105.33333333333333" height="34.333333333333343"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Shuffle"/>
+                                        <connections>
+                                            <action selector="shuffleButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gaA-tZ-JuR"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="182-Gw-qAR" userLabel="Add cards Button">
+                                <rect key="frame" x="19.999999999999993" y="749" width="101.33333333333331" height="34.333333333333371"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Add cards"/>
+                                <connections>
+                                    <action selector="addMoreCards:" destination="BYZ-38-t0r" eventType="touchUpInside" id="yU7-wO-7mc"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1sL-de-6bZ">
+                                <rect key="frame" x="269" y="684" width="73" height="69"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="Score">
+                                        <attributes>
+                                            <color key="NSColor" red="0.0" green="0.55206360479797978" blue="0.0053295012537024527" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <font key="NSFont" size="17" name="TimesNewRomanPSMT"/>
+                                            <font key="NSOriginalFont" size="17" name="Raanana"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="justified" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment content=": ">
+                                        <attributes>
+                                            <color key="NSColor" red="0.0" green="0.55206360479797978" blue="0.0053295012537024527" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <font key="NSFont" size="17" name="Raanana"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="justified" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Nkr-li-hsP" firstAttribute="leading" secondItem="182-Gw-qAR" secondAttribute="trailing" constant="22.670000000000002" id="0qO-p0-vbs"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Nkr-li-hsP" secondAttribute="bottom" constant="1.3300000000000001" id="0yp-pn-dWx"/>
+                            <constraint firstItem="t7n-zF-RNf" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="3YM-ry-aQO"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="182-Gw-qAR" secondAttribute="bottom" constant="0.67000000000000004" id="8Ke-9c-dat"/>
+                            <constraint firstItem="182-Gw-qAR" firstAttribute="top" secondItem="t7n-zF-RNf" secondAttribute="bottom" constant="73" id="8fj-H3-wQ2"/>
+                            <constraint firstItem="1sL-de-6bZ" firstAttribute="leading" secondItem="Nkr-li-hsP" secondAttribute="trailing" constant="29.670000000000002" id="B9i-Xu-CHQ"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="1sL-de-6bZ" secondAttribute="bottom" constant="5" id="ELq-ll-DON"/>
+                            <constraint firstItem="182-Gw-qAR" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="GNy-gQ-eEc"/>
+                            <constraint firstItem="t7n-zF-RNf" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="P8O-mB-Mit"/>
+                            <constraint firstItem="Nkr-li-hsP" firstAttribute="leading" secondItem="182-Gw-qAR" secondAttribute="trailing" constant="22.670000000000002" id="Q6Q-NI-OQa"/>
+                            <constraint firstItem="t7n-zF-RNf" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="VGK-o0-yze"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="1sL-de-6bZ" secondAttribute="trailing" constant="41" id="XUf-JY-N4j"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Nkr-li-hsP" secondAttribute="trailing" constant="143.66999999999999" id="kiN-S7-pza"/>
+                            <constraint firstItem="Nkr-li-hsP" firstAttribute="top" secondItem="t7n-zF-RNf" secondAttribute="bottom" constant="31" id="u6e-L9-MpE"/>
+                            <constraint firstItem="1sL-de-6bZ" firstAttribute="top" secondItem="t7n-zF-RNf" secondAttribute="bottom" constant="34" id="xFK-BX-Vo1"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="moreCardsButton" destination="182-Gw-qAR" id="xbJ-vb-Mkv"/>
+                        <outlet property="newGameButton" destination="SOG-SW-dFs" id="DYY-tx-2oX"/>
+                        <outlet property="scoreLabel" destination="1sL-de-6bZ" id="asm-dw-lxT"/>
+                        <outlet property="scrollView" destination="t7n-zF-RNf" id="pjN-Yy-j8i"/>
+                        <outlet property="shuffleButton" destination="R0R-hn-oYj" id="fhY-8h-1Un"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="135.1145038167939" y="3.5211267605633805"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
