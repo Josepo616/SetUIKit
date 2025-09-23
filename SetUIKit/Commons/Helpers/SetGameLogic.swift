@@ -55,14 +55,9 @@ class SetGameLogic {
             } else {
                 validSet = true
                 showAlertEvaluationCard()
-                updateScore()
+                addMoreCards()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    let selectedIDs = Set(selectedCards.map { $0.id })
-                    self.visibleCards.removeAll { selectedIDs.contains($0.id) }
-                    self.addMoreCards()
-                    if let newIndex = self.visibleCards.firstIndex(where: {
-                        $0.id == tappedCardID
-                    }) {
+                    if let newIndex = self.visibleCards.firstIndex(where: { $0.id == tappedCardID }) {
                         self.visibleCards[newIndex].isSelected = true
                     }
                     self.setupCardsGrid()
@@ -113,7 +108,8 @@ class SetGameLogic {
             let frame = layout.frameForCard(at: index)
             let cardView = CardView(card: card, size: frame.size)
             cardView.frame = frame
-            cardView.onCardTapped = { tappedCardID in
+            cardView.onCardTapped = { [weak self] tappedCardID in
+                guard let self else { return }
                 self.handleCardTap(tappedCardID, in: scrollView)
             }
             cardView.updateSelection(isSelected: card.isSelected)
@@ -135,13 +131,22 @@ class SetGameLogic {
             self.validSet = isValidSet(selectedCards)
             showAlertEvaluationCard()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                let selectedIDs = Set(selectedCards.map { $0.id })
                 if self.validSet {
-                    let selectedIDs = Set(selectedCards.map { $0.id })
+                    let indicesToReplace = self.visibleCards.enumerated()
+                        .filter { selectedIDs.contains($0.element.id) }
+                        .map { $0.offset }
                     self.visibleCards.removeAll { selectedIDs.contains($0.id) }
+                    let cardsToAdd = self.cardsRemaining.prefix(indicesToReplace.count)
+                    self.cardsRemaining.removeFirst(min(indicesToReplace.count, self.cardsRemaining.count))
+                    for (i, newCard) in cardsToAdd.enumerated() {
+                        let index = indicesToReplace[i]
+                        self.visibleCards.insert(newCard, at: min(index, self.visibleCards.count))
+                    }
                 } else {
                     self.deselectAll()
+                    self.addCards(count: count)
                 }
-                self.addCards(count: count)
                 self.setupCardsGrid()
                 self.updateScore()
             }
