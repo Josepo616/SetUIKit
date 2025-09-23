@@ -47,21 +47,21 @@ class SetGameLogic {
                 validSet = false
                 showAlertEvaluationCard()
                 updateScore()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     self.deselectAll()
                     self.visibleCards[index].isSelected = true
                     self.setupCardsGrid()
-                }
+                
             } else {
                 validSet = true
                 showAlertEvaluationCard()
                 addMoreCards()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    if let newIndex = self.visibleCards.firstIndex(where: { $0.id == tappedCardID }) {
+                    if let newIndex = self.visibleCards.firstIndex(where: {
+                        $0.id == tappedCardID
+                    }) {
                         self.visibleCards[newIndex].isSelected = true
                     }
                     self.setupCardsGrid()
-                }
+                
             }
             return
         }
@@ -102,6 +102,9 @@ class SetGameLogic {
             in: scrollView.bounds.size,
             padding: 16
         )
+        if layout.hiddeButton {
+            self.delegate?.didCardsRemainingOver(to: self.shouldHiddeButton)
+        }
         scrollView.subviews.forEach { $0.removeFromSuperview() }
         cardViewsByID.removeAll()
         for (index, card) in visibleCards.enumerated() {
@@ -130,18 +133,24 @@ class SetGameLogic {
         if selectedCards.count == 3 {
             self.validSet = isValidSet(selectedCards)
             showAlertEvaluationCard()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 let selectedIDs = Set(selectedCards.map { $0.id })
                 if self.validSet {
                     let indicesToReplace = self.visibleCards.enumerated()
                         .filter { selectedIDs.contains($0.element.id) }
                         .map { $0.offset }
                     self.visibleCards.removeAll { selectedIDs.contains($0.id) }
-                    let cardsToAdd = self.cardsRemaining.prefix(indicesToReplace.count)
-                    self.cardsRemaining.removeFirst(min(indicesToReplace.count, self.cardsRemaining.count))
+                    let cardsToAdd = self.cardsRemaining.prefix(
+                        indicesToReplace.count
+                    )
+                    self.cardsRemaining.removeFirst(
+                        min(indicesToReplace.count, self.cardsRemaining.count)
+                    )
                     for (i, newCard) in cardsToAdd.enumerated() {
                         let index = indicesToReplace[i]
-                        self.visibleCards.insert(newCard, at: min(index, self.visibleCards.count))
+                        self.visibleCards.insert(
+                            newCard,
+                            at: min(index, self.visibleCards.count)
+                        )
                     }
                 } else {
                     self.deselectAll()
@@ -149,7 +158,7 @@ class SetGameLogic {
                 }
                 self.setupCardsGrid()
                 self.updateScore()
-            }
+            
         } else {
             addCards(count: count)
             self.setupCardsGrid()
@@ -181,7 +190,6 @@ class SetGameLogic {
     }
 
     private func showAlertEvaluationCard() {
-        DispatchQueue.main.async {
             for card in self.visibleCards {
                 guard let cardView = self.cardViewsByID[card.id] else {
                     continue
@@ -196,7 +204,7 @@ class SetGameLogic {
                     }
                 }
             }
-        }
+        
     }
 
     // MARK: - Utility Method for Set Validation
