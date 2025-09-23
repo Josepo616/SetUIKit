@@ -7,7 +7,8 @@
 
 protocol GameViewControllerDelegate: AnyObject {
     func didUpdateScore(to score: Int)
-    func gameDidStart(to gameState: GameState)
+    func didGameStart(to gameState: GameState)
     func didRotationHappened(to hasRotated: Bool)
     func didCardsRemainingOver(to shouldHiddeButton: Bool)
+    func didGameReset(to gameState: GameState)
 }

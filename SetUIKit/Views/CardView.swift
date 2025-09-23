@@ -53,9 +53,9 @@ class CardView: UIView {
                     type: card.type,
                     color: card.color,
                     shading: card.shading,
-                    frame: shapeFrame,
+                    frame: shapeFrame
                 ),
-                count: 1,
+                count: 1
             )
             self.addSubview(shapeView)
             shapeViews.append(shapeView)

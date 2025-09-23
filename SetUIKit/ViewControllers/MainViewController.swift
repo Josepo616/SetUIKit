@@ -74,8 +74,13 @@ class MainViewController: UIViewController, GameViewControllerDelegate {
         scoreLabel.text = "Score: \(score)"
     }
 
-    func gameDidStart(to gameState: GameState) {
+    func didGameStart(to gameState: GameState) {
         currentGameState = gameState
+    }
+    
+    func didGameReset(to gameState: GameState) {
+        currentGameState = gameState
+        self.startNewGame(self)
     }
 
     func didRotationHappened(to hasRotated: Bool) {

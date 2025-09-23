@@ -16,12 +16,14 @@ class SetGameLogic {
     private var cardViewsByID: [UUID: CardView] = [:]
     weak var delegate: GameViewControllerDelegate?
     var visibleCards: [Card]
+    var gameState: GameState
     var shouldHiddeButton: Bool = true
 
-    init(startedAmount: Int, allCards: [Card], targetScrollView: UIScrollView) {
+    init(startedAmount: Int, allCards: [Card], targetScrollView: UIScrollView, gameState: GameState) {
         self.visibleCards = Array(allCards.prefix(startedAmount))
         self.cardsRemaining = Array(allCards.dropFirst(startedAmount))
         self.targetScrollView = targetScrollView
+        self.gameState = gameState
     }
 
     // MARK: - Game rules
@@ -42,6 +44,10 @@ class SetGameLogic {
             )
         else { return }
         var selectedCards = visibleCards.filter { $0.isSelected }
+        if visibleCards.count == 3 && selectedCards.count == 2{
+            self.gameState = .reset
+            self.delegate?.didGameReset(to: self.gameState)
+        }
         if selectedCards.count == 3 && !visibleCards[index].isSelected {
             if !isValidSet(selectedCards) {
                 validSet = false
@@ -68,6 +74,7 @@ class SetGameLogic {
         if visibleCards[index].isSelected {
             visibleCards[index].isSelected = false
         } else if selectedCards.count < 3 {
+
             visibleCards[index].isSelected = true
         }
         selectedCards = visibleCards.filter { $0.isSelected }
@@ -103,7 +110,7 @@ class SetGameLogic {
             padding: 16
         )
         if layout.hiddeButton {
-            self.delegate?.didCardsRemainingOver(to: self.shouldHiddeButton)
+            //self.delegate?.didCardsRemainingOver(to: self.shouldHiddeButton)
         }
         scrollView.subviews.forEach { $0.removeFromSuperview() }
         cardViewsByID.removeAll()
@@ -130,39 +137,37 @@ class SetGameLogic {
 
     func addMoreCards(count: Int = 3) {
         let selectedCards = visibleCards.filter { $0.isSelected }
-        if selectedCards.count == 3 {
-            self.validSet = isValidSet(selectedCards)
-            showAlertEvaluationCard()
-                let selectedIDs = Set(selectedCards.map { $0.id })
-                if self.validSet {
-                    let indicesToReplace = self.visibleCards.enumerated()
-                        .filter { selectedIDs.contains($0.element.id) }
-                        .map { $0.offset }
-                    self.visibleCards.removeAll { selectedIDs.contains($0.id) }
-                    let cardsToAdd = self.cardsRemaining.prefix(
-                        indicesToReplace.count
-                    )
-                    self.cardsRemaining.removeFirst(
-                        min(indicesToReplace.count, self.cardsRemaining.count)
-                    )
-                    for (i, newCard) in cardsToAdd.enumerated() {
-                        let index = indicesToReplace[i]
-                        self.visibleCards.insert(
-                            newCard,
-                            at: min(index, self.visibleCards.count)
-                        )
-                    }
-                } else {
-                    self.deselectAll()
-                    self.addCards(count: count)
-                }
-                self.setupCardsGrid()
-                self.updateScore()
-            
-        } else {
+
+        guard selectedCards.count == 3 else {
             addCards(count: count)
-            self.setupCardsGrid()
+            setupCardsGrid()
+            return
         }
+
+        self.validSet = isValidSet(selectedCards)
+        showAlertEvaluationCard()
+
+        let selectedIDs = Set(selectedCards.map { $0.id })
+
+        if self.validSet {
+            let indicesToReplace = self.visibleCards.enumerated()
+                .filter { selectedIDs.contains($0.element.id) }
+                .map { $0.offset }
+
+            self.visibleCards.removeAll { selectedIDs.contains($0.id) }
+
+            let cardsToAdd = self.cardsRemaining.prefix(indicesToReplace.count)
+            self.cardsRemaining.removeFirst(min(indicesToReplace.count, self.cardsRemaining.count))
+
+            replaceCards(at: indicesToReplace, with: Array(cardsToAdd))
+        } else {
+            self.deselectAll()
+            self.addCards(count: count)
+        }
+
+        setupCardsGrid()
+        updateScore()
+        delegateRemaingCardsCount()
     }
 
     func shuffleVisibleCards() {
@@ -170,6 +175,14 @@ class SetGameLogic {
     }
 
     // MARK: - Private Helper Methods
+    private func replaceCards(at indices: [Int], with newCards: [Card]) {
+        for (i, newCard) in newCards.enumerated() {
+            let index = indices[i]
+            self.visibleCards.insert(newCard, at: min(index, self.visibleCards.count))
+            
+        }
+    }
+
     private func addCards(count: Int) {
         cardsRemaining.removeAll { card in
             visibleCards.contains(where: { $0.id == card.id })
@@ -179,6 +192,10 @@ class SetGameLogic {
         }
         visibleCards.append(contentsOf: cardsToAdd)
         cardsRemaining.removeFirst(min(count, cardsRemaining.count))
+        delegateRemaingCardsCount()
+    }
+    
+    private func delegateRemaingCardsCount() {
         if cardsRemaining.isEmpty {
             self.delegate?.didCardsRemainingOver(to: self.shouldHiddeButton)
         }
