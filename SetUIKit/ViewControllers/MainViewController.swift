@@ -20,8 +20,38 @@ class MainViewController: UIViewController, GameViewControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         moreCardsButton.isHidden = true
+        let swipeDownGesture = UISwipeGestureRecognizer(
+            target: self,
+            action: #selector(handleSwipeDown(_:))
+        )
+        swipeDownGesture.direction = .down
+        
+        let rotationGesture = UIRotationGestureRecognizer(
+            target: self,
+            action: #selector(handleRotation(_:))
+        )
+        self.view.addGestureRecognizer(swipeDownGesture)
+        self.view.addGestureRecognizer(rotationGesture)
     }
 
+    @objc func handleSwipeDown(_ gesture: UISwipeGestureRecognizer) {
+        switch gesture.state {
+        case .ended:
+            shapesVC?.addMoreCards()
+        default:
+            break
+        }
+    }
+
+    @objc func handleRotation(_ gesture: UIRotationGestureRecognizer) {
+        switch gesture.state {
+        case .ended:
+            shapesVC?.shuffleCards()
+        default:
+            break
+        }
+    }
+    
     override func traitCollectionDidChange(
         _ previousTraitCollection: UITraitCollection?
     ) {
@@ -77,7 +107,7 @@ class MainViewController: UIViewController, GameViewControllerDelegate {
     func didGameStart(to gameState: GameState) {
         currentGameState = gameState
     }
-    
+
     func didGameReset(to gameState: GameState) {
         currentGameState = gameState
         self.startNewGame(self)
