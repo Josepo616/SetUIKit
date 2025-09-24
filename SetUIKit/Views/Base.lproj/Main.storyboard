@@ -24,7 +24,7 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="Nkr-li-hsP">
                                 <rect key="frame" x="144" y="707" width="105.33333333333331" height="75.666666666666629"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SOG-SW-dFs">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SOG-SW-dFs">
                                         <rect key="frame" x="0.0" y="0.0" width="105.33333333333333" height="34.333333333333336"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="filled" title="New game"/>
@@ -32,7 +32,7 @@
                                             <action selector="startNewGame:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cU3-9K-44K"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R0R-hn-oYj">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R0R-hn-oYj">
                                         <rect key="frame" x="0.0" y="41.333333333333371" width="105.33333333333333" height="34.333333333333343"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="filled" title="Shuffle"/>
@@ -43,7 +43,7 @@
                                 </subviews>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="182-Gw-qAR" userLabel="Add cards Button">
-                                <rect key="frame" x="19.999999999999993" y="749" width="101.33333333333331" height="34.333333333333371"/>
+                                <rect key="frame" x="19.999999999999993" y="707" width="101.33333333333331" height="76.333333333333371"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Add cards"/>
                                 <connections>
@@ -79,7 +79,7 @@
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Nkr-li-hsP" secondAttribute="bottom" constant="1.3300000000000001" id="0yp-pn-dWx"/>
                             <constraint firstItem="t7n-zF-RNf" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="3YM-ry-aQO"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="182-Gw-qAR" secondAttribute="bottom" constant="0.67000000000000004" id="8Ke-9c-dat"/>
-                            <constraint firstItem="182-Gw-qAR" firstAttribute="top" secondItem="t7n-zF-RNf" secondAttribute="bottom" constant="73" id="8fj-H3-wQ2"/>
+                            <constraint firstItem="182-Gw-qAR" firstAttribute="top" secondItem="t7n-zF-RNf" secondAttribute="bottom" constant="31" id="8fj-H3-wQ2"/>
                             <constraint firstItem="1sL-de-6bZ" firstAttribute="leading" secondItem="Nkr-li-hsP" secondAttribute="trailing" constant="29.670000000000002" id="B9i-Xu-CHQ"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="1sL-de-6bZ" secondAttribute="bottom" constant="5" id="ELq-ll-DON"/>
                             <constraint firstItem="182-Gw-qAR" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="GNy-gQ-eEc"/>
