@@ -94,7 +94,7 @@ class MainViewController: UIViewController, GameViewControllerDelegate {
         shapesVC?.shuffleCards()
     }
 
-    func didCardsRemainingOver(to shouldHidden: Bool) {
+    func shouldAddCardsButtonHidde(to shouldHidden: Bool) {
         moreCardsButton.isHidden = shouldHidden
     }
 
@@ -104,11 +104,6 @@ class MainViewController: UIViewController, GameViewControllerDelegate {
 
     func didGameStart(to gameState: GameState) {
         currentGameState = gameState
-    }
-
-    func didGameReset(to gameState: GameState) {
-        currentGameState = gameState
-        self.startNewGame(self)
     }
 
     func didRotationHappened(to hasRotated: Bool) {

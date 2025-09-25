@@ -62,18 +62,6 @@ class SetGameViewController: UIViewController {
 
     }
 
-    func pauseGame() {
-        gameState = .paused
-    }
-
-    func endGame() {
-        gameState = .lost
-    }
-
-    func completeGame() {
-        gameState = .completed
-    }
-
     func shuffleCards() {
         gameLogic.shuffleVisibleCards()
         gameLogic.setupCardsGrid()

@@ -14,6 +14,7 @@ class SetGameLogic {
     private(set) var validSet: Bool = false
     private(set) var score: Int = 0
     private var cardViewsByID: [UUID: CardView] = [:]
+    private var selectedCards: [Card] = []
     weak var delegate: GameViewControllerDelegate?
     var visibleCards: [Card]
     var gameState: GameState
@@ -47,39 +48,40 @@ class SetGameLogic {
         guard
             let index = visibleCards.firstIndex(where: { $0.id == tappedCardID }
             )
-        else { return }
-        var selectedCards = visibleCards.filter { $0.isSelected }
-        if visibleCards.count == 3 && selectedCards.count == 2 {
-            self.gameState = .reset
-            self.delegate?.didGameReset(to: self.gameState)
-        }
-        if selectedCards.count == 3 && !visibleCards[index].isSelected {
-            if !isValidSet(selectedCards) {
-                validSet = false
-                showAlertEvaluationCard()
-                updateScore()
-                self.deselectAll()
-                self.visibleCards[index].isSelected = true
-                self.setupCardsGrid()
-            } else {
-                validSet = true
-                showAlertEvaluationCard()
-                addMoreCards()
-                if let newIndex = self.visibleCards.firstIndex(where: {
-                    $0.id == tappedCardID
-                }) {
-                    self.visibleCards[newIndex].isSelected = true
-                }
-                self.setupCardsGrid()
-            }
+        else {
             return
         }
-        if visibleCards[index].isSelected {
+        selectedCards = visibleCards.filter { $0.isSelected }
+        if visibleCards[index].isSelected && selectedCards.count < 3 {
             visibleCards[index].isSelected = false
-        } else if selectedCards.count < 3 {
+        } else if selectedCards.count < 4 {
             visibleCards[index].isSelected = true
         }
         selectedCards = visibleCards.filter { $0.isSelected }
+        if selectedCards.count == 3 {
+            if !isValidSet(selectedCards) {
+                validSet = false
+            } else {
+                validSet = true
+            }
+            showAlertEvaluationCard()
+            updateScore()
+        }
+        if selectedCards.count == 4 {
+            let tappedCard = visibleCards[index]
+            if let selectedIndex = selectedCards.firstIndex(where: {
+                $0.id == tappedCard.id
+            }) {
+                selectedCards.remove(at: selectedIndex)
+            }
+            if !validSet {
+                deselectAll(selectedCards)
+            } else {
+                addMoreCards(selectedCards)
+            }
+            self.setupCardsGrid()
+            return
+        }
         if let tappedView = scrollView.subviews
             .compactMap({ $0 as? CardView })
             .first(where: { $0.card.id == tappedCardID })
@@ -87,20 +89,6 @@ class SetGameLogic {
             tappedView.updateSelection(
                 isSelected: visibleCards[index].isSelected
             )
-        }
-    }
-
-    func evaluateSelectedCards(onValid: () -> Void, onInvalid: () -> Void) {
-        let selectedCards = visibleCards.filter { $0.isSelected }
-        if selectedCards.count == 3 {
-            if isValidSet(selectedCards) {
-                let selectedIDs = Set(selectedCards.map { $0.id })
-                visibleCards.removeAll { selectedIDs.contains($0.id) }
-                onValid()
-            } else {
-                deselectAll()
-                onInvalid()
-            }
         }
     }
 
@@ -112,7 +100,7 @@ class SetGameLogic {
             padding: 16
         )
         if layout.hiddeButton {
-            //self.delegate?.didCardsRemainingOver(to: self.shouldHiddeButton)
+            //self.delegate?.shouldAddCardsButtonHidde(to: self.shouldHiddeButton)
         }
         scrollView.subviews.forEach { $0.removeFromSuperview() }
         cardViewsByID.removeAll()
@@ -131,21 +119,27 @@ class SetGameLogic {
         scrollView.contentSize = layout.contentSize ?? .zero
     }
 
-    func deselectAll() {
-        for i in visibleCards.indices {
-            visibleCards[i].isSelected = false
+    func deselectAll(_ selectedCards: [Card]? = nil) {
+        if let selectedCards = selectedCards {
+            for card in selectedCards {
+                guard let index = visibleCards.firstIndex(of: card) else {
+                    continue
+                }
+                visibleCards[index].isSelected = false
+            }
+            return
         }
     }
 
-    func addMoreCards(count: Int = 3) {
-        let selectedCards = visibleCards.filter { $0.isSelected }
+    func addMoreCards(count: Int = 3, _ selectedCards: [Card]? = nil) {
+        let selectedCards =
+            selectedCards ?? visibleCards.filter { $0.isSelected }
         guard selectedCards.count == 3 else {
             addCards(count: count)
             setupCardsGrid()
             return
         }
         self.validSet = isValidSet(selectedCards)
-        showAlertEvaluationCard()
         let selectedIDs = Set(selectedCards.map { $0.id })
         if self.validSet {
             let indicesToReplace = self.visibleCards.enumerated()
@@ -158,12 +152,10 @@ class SetGameLogic {
             )
             replaceCards(at: indicesToReplace, with: Array(cardsToAdd))
         } else {
-            self.deselectAll()
+            self.deselectAll(selectedCards)
             self.addCards(count: count)
         }
-
         setupCardsGrid()
-        updateScore()
         delegateRemaingCardsCount()
     }
 
@@ -196,7 +188,7 @@ class SetGameLogic {
 
     private func delegateRemaingCardsCount() {
         if cardsRemaining.isEmpty {
-            self.delegate?.didCardsRemainingOver(to: self.shouldHiddeButton)
+            self.delegate?.shouldAddCardsButtonHidde(to: self.shouldHiddeButton)
         }
     }
 
@@ -213,7 +205,7 @@ class SetGameLogic {
             if card.isSelected {
                 let message =
                     self.validSet
-                    ? "Set was removed!" : "Invalid Set, try again!"
+                    ? "Set valid, keep going!" : "Invalid Set, try again!"
                 delegate?.showSnackbarMessage(message: message)
             }
         }
