@@ -15,6 +15,8 @@ class SetGameLogic {
     private(set) var score: Int = 0
     private var cardViewsByID: [UUID: CardView] = [:]
     private var selectedCards: [Card] = []
+    private var mappedCardIDs: [UUID] = []
+    private var scoreUpdated: Bool = false
     weak var delegate: GameViewControllerDelegate?
     var visibleCards: [Card]
     var gameState: GameState
@@ -65,7 +67,10 @@ class SetGameLogic {
                 validSet = true
             }
             showAlertEvaluationCard()
-            updateScore()
+            if !scoreUpdated{
+                updateScore()
+                scoreUpdated = true
+            }
         }
         if selectedCards.count == 4 {
             let tappedCard = visibleCards[index]
@@ -79,6 +84,7 @@ class SetGameLogic {
             } else {
                 addMoreCards(selectedCards)
             }
+            scoreUpdated = false
             self.setupCardsGrid()
             return
         }
