@@ -14,9 +14,9 @@ struct CardsGridLayout {
     let rows: Int
     let padding: CGFloat
     let totalCards: Int
-    let hiddeButton: Bool
+    let hideButton: Bool
 
-    var contentSize: CGSize? {
+    var contentSize: CGSize {
         let height = CGFloat(rows) * (cardSize.height + padding) + padding
         return CGSize(
             width: CGFloat(columns) * (cardSize.width + padding) + padding,
@@ -60,11 +60,29 @@ struct CardsGridLayout {
                     rows: rows,
                     padding: padding,
                     totalCards: cardCount,
-                    hiddeButton: cardCount >= 24
+                    hideButton: cardCount >= 24
                 )
             }
         }
-        return bestLayout!
+
+        if let layout = bestLayout {
+            return layout
+        } else {
+            let columns = 1
+            let rows = cardCount
+            let totalHorizontalPadding = CGFloat(columns + 1) * padding
+            let availableWidth = size.width - totalHorizontalPadding
+            let width = max(minCardWidth, availableWidth)
+            let cardSize = CGSize(width: width, height: width)
+            return CardsGridLayout(
+                cardSize: cardSize,
+                columns: columns,
+                rows: rows,
+                padding: padding,
+                totalCards: cardCount,
+                hideButton: cardCount >= 24
+            )
+        }
     }
 
     func frameForCard(at index: Int) -> CGRect {

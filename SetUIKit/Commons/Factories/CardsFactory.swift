@@ -13,7 +13,7 @@ struct CardsFactory {
         for type in CardType.allCases {
             for color in CardColor.allCases {
                 for shading in CardShading.allCases {
-                    for count in 1...3 {
+                    for count in 1...1 {
                         deck.append(
                             Card(
                                 id: UUID(),

@@ -36,8 +36,8 @@ class ShapeView: UIView {
         let maxShapeSize = min(rect.width * 0.6, maxPossibleHeightPerShape)
         let totalContentHeight = (CGFloat(count) * maxShapeSize) + totalSpacing
         let startY = (rect.height - totalContentHeight) / 2
-        for i in 0..<count {
-            let originY = startY + CGFloat(i) * (maxShapeSize + spacing)
+        for index in 0..<count {
+            let originY = startY + CGFloat(index) * (maxShapeSize + spacing)
             let originX = (rect.width - maxShapeSize) / 2
             let shapeRect = CGRect(
                 x: originX,
@@ -78,13 +78,13 @@ class ShapeView: UIView {
         let stripeSpacing = shapeRect.width / 10
         let extendedRect = shapeRect.insetBy(dx: -10, dy: 0)
 
-        for x in stride(
+        for strideXPosition in stride(
             from: extendedRect.minX,
             to: extendedRect.maxX,
             by: stripeSpacing
         ) {
-            stripePath.move(to: CGPoint(x: x, y: extendedRect.minY))
-            stripePath.addLine(to: CGPoint(x: x, y: extendedRect.maxY))
+            stripePath.move(to: CGPoint(x: strideXPosition, y: extendedRect.minY))
+            stripePath.addLine(to: CGPoint(x: strideXPosition, y: extendedRect.maxY))
         }
 
         color.setStroke()

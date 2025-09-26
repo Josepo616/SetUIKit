@@ -15,7 +15,6 @@ class SetGameLogic {
     private(set) var score: Int = 0
     private var cardViewsByID: [UUID: CardView] = [:]
     private var selectedCards: [Card] = []
-    private var mappedCardIDs: [UUID] = []
     private var scoreUpdated: Bool = false
     weak var delegate: GameViewControllerDelegate?
     var visibleCards: [Card]
@@ -54,40 +53,47 @@ class SetGameLogic {
             return
         }
         selectedCards = visibleCards.filter { $0.isSelected }
+        
         if visibleCards[index].isSelected && selectedCards.count < 3 {
             visibleCards[index].isSelected = false
         } else if selectedCards.count < 4 {
             visibleCards[index].isSelected = true
         }
+
         selectedCards = visibleCards.filter { $0.isSelected }
-        if selectedCards.count == 3 {
-            if !isValidSet(selectedCards) {
-                validSet = false
-            } else {
-                validSet = true
-            }
+
+        switch selectedCards.count {
+        case 3:
+            validSet = isValidSet(selectedCards)
             showAlertEvaluationCard()
-            if !scoreUpdated{
+
+            if !scoreUpdated {
                 updateScore()
                 scoreUpdated = true
             }
-        }
-        if selectedCards.count == 4 {
+
+        case 4:
             let tappedCard = visibleCards[index]
             if let selectedIndex = selectedCards.firstIndex(where: {
                 $0.id == tappedCard.id
             }) {
                 selectedCards.remove(at: selectedIndex)
             }
+
             if !validSet {
-                deselectAll(selectedCards)
+                deselectCards(selectedCards)
             } else {
                 addMoreCards(selectedCards)
             }
+
             scoreUpdated = false
-            self.setupCardsGrid()
+            setupCardsGrid()
             return
+
+        default:
+            break
         }
+
         if let tappedView = scrollView.subviews
             .compactMap({ $0 as? CardView })
             .first(where: { $0.card.id == tappedCardID })
@@ -105,7 +111,7 @@ class SetGameLogic {
             in: scrollView.bounds.size,
             padding: 16
         )
-        if layout.hiddeButton {
+        if layout.hideButton {
             //self.delegate?.shouldAddCardsButtonHidde(to: self.shouldHiddeButton)
         }
         scrollView.subviews.forEach { $0.removeFromSuperview() }
@@ -122,18 +128,14 @@ class SetGameLogic {
             scrollView.addSubview(cardView)
             cardViewsByID[card.id] = cardView
         }
-        scrollView.contentSize = layout.contentSize ?? .zero
+        scrollView.contentSize = layout.contentSize
     }
 
-    func deselectAll(_ selectedCards: [Card]? = nil) {
-        if let selectedCards = selectedCards {
-            for card in selectedCards {
-                guard let index = visibleCards.firstIndex(of: card) else {
-                    continue
-                }
+    func deselectCards(_ selectedCards: [Card]) {
+        selectedCards.forEach { card in
+            if let index = visibleCards.firstIndex(of: card) {
                 visibleCards[index].isSelected = false
             }
-            return
         }
     }
 
@@ -156,9 +158,9 @@ class SetGameLogic {
             self.cardsRemaining.removeFirst(
                 min(indicesToReplace.count, self.cardsRemaining.count)
             )
-            replaceCards(at: indicesToReplace, with: Array(cardsToAdd))
+            insertCardsReplacingSelected(at: indicesToReplace, with: Array(cardsToAdd))
         } else {
-            self.deselectAll(selectedCards)
+            self.deselectCards(selectedCards)
             self.addCards(count: count)
         }
         setupCardsGrid()
@@ -170,7 +172,7 @@ class SetGameLogic {
     }
 
     // MARK: - Private Helper Methods
-    private func replaceCards(at indices: [Int], with newCards: [Card]) {
+    private func insertCardsReplacingSelected(at indices: [Int], with newCards: [Card]) {
         for (i, newCard) in newCards.enumerated() {
             let index = indices[i]
             self.visibleCards.insert(
@@ -194,7 +196,7 @@ class SetGameLogic {
 
     private func delegateRemaingCardsCount() {
         if cardsRemaining.isEmpty {
-            self.delegate?.shouldAddCardsButtonHidde(to: self.shouldHiddeButton)
+            self.delegate?.setAddCardsButtonHidden(to: self.shouldHiddeButton)
         }
     }
 

@@ -94,7 +94,7 @@ class MainViewController: UIViewController, GameViewControllerDelegate {
         shapesVC?.shuffleCards()
     }
 
-    func shouldAddCardsButtonHidde(to shouldHidden: Bool) {
+    func setAddCardsButtonHidden(to shouldHidden: Bool) {
         moreCardsButton.isHidden = shouldHidden
     }
 

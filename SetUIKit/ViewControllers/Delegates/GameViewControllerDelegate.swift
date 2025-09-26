@@ -9,6 +9,6 @@ protocol GameViewControllerDelegate: AnyObject {
     func didUpdateScore(to score: Int)
     func didGameStart(to gameState: GameState)
     func didRotationHappened(to hasRotated: Bool)
-    func shouldAddCardsButtonHidde(to shouldHiddeButton: Bool)
+    func setAddCardsButtonHidden(to shouldHiddeButton: Bool)
     func showSnackbarMessage(message: String)
 }
