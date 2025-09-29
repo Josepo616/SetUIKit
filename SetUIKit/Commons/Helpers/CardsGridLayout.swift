@@ -14,9 +14,9 @@ struct CardsGridLayout {
     let rows: Int
     let padding: CGFloat
     let totalCards: Int
-    let hiddeButton: Bool
+    let hideButton: Bool
 
-    var contentSize: CGSize? {
+    var contentSize: CGSize {
         let height = CGFloat(rows) * (cardSize.height + padding) + padding
         return CGSize(
             width: CGFloat(columns) * (cardSize.width + padding) + padding,
@@ -29,32 +29,60 @@ struct CardsGridLayout {
         in size: CGSize,
         padding: CGFloat
     ) -> CardsGridLayout {
-        let minCardWidth: CGFloat = 50
-        let maxColumns = Int(size.width / (minCardWidth + padding))
-        let columns = max(1, min(maxColumns, cardCount))
-        let rows = (cardCount + columns - 1) / columns
-        let totalHorizontalPadding = CGFloat(columns + 1) * padding
-        let availableWidth = size.width - totalHorizontalPadding
-        let cardWidth = availableWidth / CGFloat(columns)
-        let hiddeButton = cardCount >= 24
-        var cardHeight: CGFloat
-        let totalVerticalPadding = CGFloat(rows + 1) * padding
-        let availableHeight = size.height - totalVerticalPadding
-        cardHeight = availableHeight / CGFloat(rows)
         let maxAspectRatio: CGFloat = 2.0
-        if cardHeight / cardWidth > maxAspectRatio {
-            cardHeight = cardWidth * maxAspectRatio
+        let minCardWidth: CGFloat = 50
+        var bestLayout: CardsGridLayout?
+        var maxCardArea: CGFloat = 0
+
+        for columns in 1...cardCount {
+            let rows = (cardCount + columns - 1) / columns
+            let totalHorizontalPadding = CGFloat(columns + 1) * padding
+            let totalVerticalPadding = CGFloat(rows + 1) * padding
+            let availableWidth = size.width - totalHorizontalPadding
+            let availableHeight = size.height - totalVerticalPadding
+            let cardWidth = availableWidth / CGFloat(columns)
+            var cardHeight = availableHeight / CGFloat(rows)
+
+            if cardWidth < minCardWidth { continue }
+
+            if cardHeight / cardWidth > maxAspectRatio {
+                cardHeight = cardWidth * maxAspectRatio
+            }
+
+            let cardSize = CGSize(width: cardWidth, height: cardHeight)
+            let cardArea = cardSize.width * cardSize.height
+
+            if cardArea > maxCardArea {
+                maxCardArea = cardArea
+                bestLayout = CardsGridLayout(
+                    cardSize: cardSize,
+                    columns: columns,
+                    rows: rows,
+                    padding: padding,
+                    totalCards: cardCount,
+                    hideButton: cardCount >= 24
+                )
+            }
         }
 
-        let cardSize = CGSize(width: cardWidth, height: cardHeight)
-        return CardsGridLayout(
-            cardSize: cardSize,
-            columns: columns,
-            rows: rows,
-            padding: padding,
-            totalCards: cardCount,
-            hiddeButton: hiddeButton
-        )
+        if let layout = bestLayout {
+            return layout
+        } else {
+            let columns = 1
+            let rows = cardCount
+            let totalHorizontalPadding = CGFloat(columns + 1) * padding
+            let availableWidth = size.width - totalHorizontalPadding
+            let width = max(minCardWidth, availableWidth)
+            let cardSize = CGSize(width: width, height: width)
+            return CardsGridLayout(
+                cardSize: cardSize,
+                columns: columns,
+                rows: rows,
+                padding: padding,
+                totalCards: cardCount,
+                hideButton: cardCount >= 24
+            )
+        }
     }
 
     func frameForCard(at index: Int) -> CGRect {

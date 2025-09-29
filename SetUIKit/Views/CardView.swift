@@ -53,9 +53,9 @@ class CardView: UIView {
                     type: card.type,
                     color: card.color,
                     shading: card.shading,
-                    frame: shapeFrame,
+                    frame: shapeFrame
                 ),
-                count: 1,
+                count: 1
             )
             self.addSubview(shapeView)
             shapeViews.append(shapeView)
@@ -65,7 +65,7 @@ class CardView: UIView {
     func updateSelection(isSelected: Bool) {
         UIView.animate(withDuration: 0.3) {
             self.layer.borderColor =
-                isSelected ? UIColor.cyan.cgColor : UIColor.label.cgColor
+            isSelected ? UIColor.selection.cgColor : UIColor.label.cgColor
         }
     }
 

@@ -6,5 +6,5 @@
 //
 
 enum CardType: CaseIterable {
-    case triangle, circle, square
+    case squiggle, diamond, rectangle
 }

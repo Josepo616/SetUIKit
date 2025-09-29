@@ -6,10 +6,5 @@
 //
 
 enum GameState {
-    case notStarted
-    case started
-    case paused
-    case lost
-    case completed
-    case skipped
+    case notStarted, started
 }
