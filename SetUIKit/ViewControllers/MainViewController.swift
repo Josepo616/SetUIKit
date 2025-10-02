@@ -14,7 +14,7 @@ class MainViewController: UIViewController, GameViewControllerDelegate {
     @IBOutlet weak var moreCardsButton: UIButton!
     @IBOutlet weak var shuffleButton: UIButton!
     @IBOutlet weak var scoreLabel: UILabel!
-    private var shapesVC: SetGameViewController?
+    var shapesVC: SetGameViewController?
     private var currentGameState: GameState = .notStarted
 
     override func viewDidLoad() {
@@ -83,6 +83,43 @@ class MainViewController: UIViewController, GameViewControllerDelegate {
         {
             shapesVC?.gameLogic.setupCardsGrid()
             shapesVC?.hasRotated = false
+        }
+    }
+    
+    func showSnackbarMessage(message: String) {
+        let snackbar = UIView()
+        snackbar.backgroundColor = shapesVC?.gameLogic.validSet ?? false ? .init(red: 0, green: 0.4, blue: 0, alpha: 1) : .systemRed
+        snackbar.layer.cornerRadius = 10
+        snackbar.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(snackbar)
+
+        let label = UILabel()
+        label.text = message
+        label.textColor = .white
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        snackbar.addSubview(label)
+
+        NSLayoutConstraint.activate([
+            snackbar.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -50),
+            snackbar.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            snackbar.widthAnchor.constraint(equalToConstant: 300),
+            snackbar.heightAnchor.constraint(equalToConstant: 50),
+
+            label.centerXAnchor.constraint(equalTo: snackbar.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: snackbar.centerYAnchor)
+        ])
+
+        UIView.animate(withDuration: 2) {
+            snackbar.alpha = 0.2
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            UIView.animate(withDuration: 0.3, animations: {
+                snackbar.alpha = 0
+            }) { _ in
+                snackbar.removeFromSuperview()
+            }
         }
     }
 }

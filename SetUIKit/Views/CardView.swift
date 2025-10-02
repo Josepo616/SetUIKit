@@ -7,7 +7,11 @@
 
 import UIKit
 
-class CardView: UIView {
+protocol CardSelectionType {
+    func updateSelection(isSelected: Bool)
+}
+
+class CardView: UIView, CardSelectionType {
 
     private var shapeViews: [UIView] = []
     var card: Card

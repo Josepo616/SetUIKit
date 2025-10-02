@@ -26,7 +26,8 @@ class SetGameViewController: UIViewController {
         self.gameLogic = SetGameLogic(
             startedAmount: startedAmount,
             allCards: allCards,
-            targetScrollView: targetScrollView
+            targetScrollView: targetScrollView,
+            gameState: gameState
         )
         self.gameState = gameState
         super.init(nibName: nil, bundle: nil)
@@ -48,7 +49,7 @@ class SetGameViewController: UIViewController {
         })
     }
 
-    private func handleCardTap(
+    func handleCardTap(
         _ tappedCardID: UUID,
         in scrollView: UIScrollView
     ) {
@@ -59,18 +60,6 @@ class SetGameViewController: UIViewController {
         gameState = .started
         gameLogic.delegate?.gameDidStart(to: gameState)
 
-    }
-
-    func pauseGame() {
-        gameState = .paused
-    }
-
-    func endGame() {
-        gameState = .lost
-    }
-
-    func completeGame() {
-        gameState = .completed
     }
 
     func shuffleCards() {
