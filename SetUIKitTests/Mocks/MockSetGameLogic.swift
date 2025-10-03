@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 @testable import SetUIKit
 
 class MockSetGameLogic: SetGameLogic {
@@ -28,7 +29,10 @@ class MockSetGameLogic: SetGameLogic {
         setupCardsGridCalled = true
     }
 
-    override func handleCardTap(_ tappedCardID: UUID, in scrollView: UIScrollView) {
+    override func handleCardTap(
+        _ tappedCardID: UUID,
+        in scrollView: UIScrollView
+    ) {
         lastTappedCardID = tappedCardID
     }
 }

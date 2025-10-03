@@ -6,6 +6,7 @@
 //
 
 import XCTest
+
 @testable import SetUIKit
 
 final class SetGameViewControllerTests: XCTestCase {
@@ -15,11 +16,15 @@ final class SetGameViewControllerTests: XCTestCase {
     var vc: SetGameViewControllerMock!
 
     // MARK: - SetUp and TearDown
-
     override func setUp() {
         super.setUp()
         // Initialize the common dependencies before each test
-        mockLogic = MockSetGameLogic(startedAmount: 12, allCards: [], targetScrollView: UIScrollView(), gameState: .notStarted)
+        mockLogic = MockSetGameLogic(
+            startedAmount: 12,
+            allCards: [],
+            targetScrollView: UIScrollView(),
+            gameState: .notStarted
+        )
         vc = SetGameViewControllerMock(gameLogic: mockLogic)
     }
 
@@ -31,34 +36,30 @@ final class SetGameViewControllerTests: XCTestCase {
     }
 
     // MARK: - Tests
-
-    func test_shuffleCards_callsGameLogicMethods() {
-        // When
+    func testShuffleCardsCallsGameLogicMethods() {
+        /// When
         vc.shuffleCards()
-
-        // Then
+        /// Then
         XCTAssertTrue(mockLogic.shuffleVisibleCardsCalled)
-        //XCTAssertTrue(mockLogic.setupCardsGridCalled)
+        XCTAssertTrue(mockLogic.setupCardsGridCalled)
     }
 
-    func test_addMoreCards_callsGameLogicMethods() {
-        // When
+    func testAddMoreCardsCallsGameLogicMethods() {
+        /// When
         vc.addMoreCards()
-
-        // Then
+        /// Then
         XCTAssertTrue(mockLogic.addMoreCardsCalled)
         XCTAssertEqual(mockLogic.addMoreCardsCount, 3)
         XCTAssertTrue(mockLogic.setupCardsGridCalled)
     }
 
-    func test_handleCardTap_callsGameLogicHandleCardTap() {
+    func testHandleCardTapCallsGameLogicHandleCardTap() {
+        /// Given
         let scrollView = UIScrollView()
         let tappedID = UUID()
-
-        // When
+        /// When
         vc.handleCardTap(tappedID, in: scrollView)
-
-        // Then
+        /// Then
         XCTAssertEqual(mockLogic.lastTappedCardID, tappedID)
     }
 }

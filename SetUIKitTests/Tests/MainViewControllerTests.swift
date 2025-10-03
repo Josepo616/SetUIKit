@@ -37,40 +37,55 @@ final class MainViewControllerTests: XCTestCase {
 
     // MARK: - Tests
 
-    func test_startNewGame_createsNewSetGameViewController_andResetsScore() {
+    func testStartNewGameCreatesNewSetGameViewControllerAndResetsScore() {
+        /// Given
         XCTAssertEqual(mainVC.children.count, 0)
         XCTAssertEqual(mainVC.scoreLabel.text, nil)
         XCTAssertTrue(mainVC.moreCardsButton.isHidden)
-
+        /// When
         mainVC.startNewGame(self)
-
+        /// Then
         XCTAssertEqual(mainVC.children.count, 1)
         XCTAssertNotNil(mainVC.shapesVC)
         XCTAssertEqual(mainVC.scoreLabel.text, "Score: 0")
         XCTAssertFalse(mainVC.moreCardsButton.isHidden)
     }
 
-    func test_addMoreCards_callsGameLogicAddMoreCards() {
+    func testAddMoreCardsCallsGameLogicAddMoreCards() {
+        /// Given
         XCTAssertFalse(mockGameLogic.addMoreCardsCalled)
+        /// When
         mainVC.addMoreCards(self)
+        /// Then
         XCTAssertTrue(mockGameLogic.addMoreCardsCalled)
     }
 
-    func test_shuffleButtonAction_callsGameLogicShuffle() {
+    func testShuffleButtonActionCallsGameLogicShuffle() {
+        /// Given
         XCTAssertFalse(mockGameLogic.shuffleVisibleCardsCalled)
+        /// When
         mainVC.shuffleButtonAction(self)
+        /// Then
         XCTAssertTrue(mockGameLogic.shuffleVisibleCardsCalled)
     }
 
-    func test_didUpdateScore_updatesScoreLabel() {
+    func testDidUpdateScoreUpdatesScoreLabel() {
+        /// Given: The score starts in 0
+        /// When
         mainVC.didUpdateScore(to: 5)
+        /// Then
         XCTAssertEqual(mainVC.scoreLabel.text, "Score: 5")
     }
 
-    func test_didCardsRemainingOver_updatesMoreCardsButtonVisibility() {
+    func testDidCardsRemainingOverUpdatesMoreCardsButtonVisibility() {
+        /// Given: the initial state for the button visibility is hide
+        /// When
         mainVC.didCardsRemainingOver(to: true)
+        /// Then
         XCTAssertTrue(mainVC.moreCardsButton.isHidden)
+        /// When
         mainVC.didCardsRemainingOver(to: false)
+        /// Then
         XCTAssertFalse(mainVC.moreCardsButton.isHidden)
     }
 }

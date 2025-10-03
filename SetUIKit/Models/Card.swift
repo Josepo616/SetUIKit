@@ -19,4 +19,3 @@ struct Card: Identifiable, Equatable {
     var isVisible: Bool = true
     var position: CGPoint?
 }
-

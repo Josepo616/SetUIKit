@@ -5,8 +5,9 @@
 //  Created by JoseAlvarez on 10/2/25.
 //
 
-import XCTest
 import UIKit
+import XCTest
+
 @testable import SetUIKit
 
 final class MockGameDelegate: GameViewControllerDelegate {
@@ -37,7 +38,6 @@ final class MockGameDelegate: GameViewControllerDelegate {
     }
 
     func showSnackbarMessage(message: String) {
-        print("Snackbar message: \(message)")
         lastSnackbarMessage = message
     }
 }

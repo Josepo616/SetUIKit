@@ -106,9 +106,9 @@ class SetGameLogic {
             in: scrollView.bounds.size,
             padding: 16
         )
-        if layout.hiddeButton {
-            self.delegate?.didCardsRemainingOver(to: self.shouldHiddeButton)
-        }
+        
+        self.delegate?.didCardsRemainingOver(to: layout.hiddeButton)
+        
         scrollView.subviews.forEach { $0.removeFromSuperview() }
         cardViewsByID.removeAll()
         for (index, card) in visibleCards.enumerated() {
@@ -190,6 +190,7 @@ class SetGameLogic {
     }
 
     private func delegateRemaingCardsCount() {
+        print("cards remaining: ", cardsRemaining.count)
         if cardsRemaining.isEmpty {
             self.delegate?.didCardsRemainingOver(to: self.shouldHiddeButton)
         }

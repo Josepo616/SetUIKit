@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 @testable import SetUIKit
 
 final class MainViewControllerMock: MainViewController {
@@ -18,25 +19,16 @@ final class MainViewControllerMock: MainViewController {
 
     func setupOutletsForTesting() {
         self.view = UIView()
-
         scrollViewStrong = UIScrollView()
         scoreLabelStrong = UILabel()
         moreCardsButtonStrong = UIButton()
         newGameButtonStrong = UIButton()
         shuffleButtonStrong = UIButton()
-
         self.scrollView = scrollViewStrong
         self.scoreLabel = scoreLabelStrong
         self.moreCardsButton = moreCardsButtonStrong
         self.newGameButton = newGameButtonStrong
         self.shuffleButton = shuffleButtonStrong
-
         self.moreCardsButton.isHidden = true
-    }
-
-    override func viewDidLoad() {
-    }
-
-    override func loadView() {
     }
 }
