@@ -16,7 +16,7 @@ struct CardsGridLayout {
     let totalCards: Int
     let hiddeButton: Bool
 
-    var contentSize: CGSize? {
+    var contentSize: CGSize {
         let height = CGFloat(rows) * (cardSize.height + padding) + padding
         return CGSize(
             width: CGFloat(columns) * (cardSize.width + padding) + padding,

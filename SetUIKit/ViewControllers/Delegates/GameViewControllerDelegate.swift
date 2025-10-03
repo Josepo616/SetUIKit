@@ -10,4 +10,5 @@ protocol GameViewControllerDelegate: AnyObject {
     func gameDidStart(to gameState: GameState)
     func didRotationHappened(to hasRotated: Bool)
     func didCardsRemainingOver(to shouldHiddeButton: Bool)
+    func showSnackbarMessage(message: String)
 }

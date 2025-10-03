@@ -10,18 +10,22 @@ import UIKit
 class SetGameLogic {
 
     private let targetScrollView: UIScrollView
-    private(set) var cardsRemaining: [Card]
-    private(set) var validSet: Bool = false
     private(set) var score: Int = 0
-    private var cardViewsByID: [UUID: CardView] = [:]
     weak var delegate: GameViewControllerDelegate?
+    var cardsRemaining: [Card]
+    var cardViewsByID: [UUID: CardView] = [:]
+    var selectedCards: [Card] = []
+    var scoreUpdated: Bool = false
+    var validSet: Bool = false
     var visibleCards: [Card]
+    var gameState: GameState
     var shouldHiddeButton: Bool = true
 
-    init(startedAmount: Int, allCards: [Card], targetScrollView: UIScrollView) {
+    init(startedAmount: Int, allCards: [Card], targetScrollView: UIScrollView, gameState: GameState) {
         self.visibleCards = Array(allCards.prefix(startedAmount))
         self.cardsRemaining = Array(allCards.dropFirst(startedAmount))
         self.targetScrollView = targetScrollView
+        self.gameState = gameState
     }
 
     // MARK: - Game rules
@@ -40,37 +44,51 @@ class SetGameLogic {
         guard
             let index = visibleCards.firstIndex(where: { $0.id == tappedCardID }
             )
-        else { return }
-        var selectedCards = visibleCards.filter { $0.isSelected }
-        if selectedCards.count == 3 && !visibleCards[index].isSelected {
-            if !isValidSet(selectedCards) {
-                validSet = false
-                showAlertEvaluationCard()
-                updateScore()
-                    self.deselectAll()
-                    self.visibleCards[index].isSelected = true
-                    self.setupCardsGrid()
-                
-            } else {
-                validSet = true
-                showAlertEvaluationCard()
-                addMoreCards()
-                    if let newIndex = self.visibleCards.firstIndex(where: {
-                        $0.id == tappedCardID
-                    }) {
-                        self.visibleCards[newIndex].isSelected = true
-                    }
-                    self.setupCardsGrid()
-                
-            }
+        else {
             return
         }
-        if visibleCards[index].isSelected {
+        selectedCards = visibleCards.filter { $0.isSelected }
+        
+        if visibleCards[index].isSelected && selectedCards.count < 3 {
             visibleCards[index].isSelected = false
-        } else if selectedCards.count < 3 {
+        } else if selectedCards.count < 4 {
             visibleCards[index].isSelected = true
         }
+
         selectedCards = visibleCards.filter { $0.isSelected }
+
+        switch selectedCards.count {
+        case 3:
+            validSet = isValidSet(selectedCards)
+            showAlertEvaluationCard()
+
+            if !scoreUpdated {
+                updateScore()
+                scoreUpdated = true
+            }
+
+        case 4:
+            let tappedCard = visibleCards[index]
+            if let selectedIndex = selectedCards.firstIndex(where: {
+                $0.id == tappedCard.id
+            }) {
+                selectedCards.remove(at: selectedIndex)
+            }
+
+            if !validSet {
+                deselectCards(selectedCards)
+            } else {
+                addMoreCards(selectedCards)
+            }
+
+            scoreUpdated = false
+            setupCardsGrid()
+            return
+
+        default:
+            break
+        }
+
         if let tappedView = scrollView.subviews
             .compactMap({ $0 as? CardView })
             .first(where: { $0.card.id == tappedCardID })
@@ -81,20 +99,6 @@ class SetGameLogic {
         }
     }
 
-    func evaluateSelectedCards(onValid: () -> Void, onInvalid: () -> Void) {
-        let selectedCards = visibleCards.filter { $0.isSelected }
-        if selectedCards.count == 3 {
-            if isValidSet(selectedCards) {
-                let selectedIDs = Set(selectedCards.map { $0.id })
-                visibleCards.removeAll { selectedIDs.contains($0.id) }
-                onValid()
-            } else {
-                deselectAll()
-                onInvalid()
-            }
-        }
-    }
-
     func setupCardsGrid() {
         let scrollView = targetScrollView
         let layout = CardsGridLayout.calculateLayout(
@@ -102,9 +106,9 @@ class SetGameLogic {
             in: scrollView.bounds.size,
             padding: 16
         )
-        if layout.hiddeButton {
-            self.delegate?.didCardsRemainingOver(to: self.shouldHiddeButton)
-        }
+        
+        self.delegate?.didCardsRemainingOver(to: layout.hiddeButton)
+        
         scrollView.subviews.forEach { $0.removeFromSuperview() }
         cardViewsByID.removeAll()
         for (index, card) in visibleCards.enumerated() {
@@ -119,50 +123,43 @@ class SetGameLogic {
             scrollView.addSubview(cardView)
             cardViewsByID[card.id] = cardView
         }
-        scrollView.contentSize = layout.contentSize ?? .zero
+        scrollView.contentSize = layout.contentSize
     }
 
-    func deselectAll() {
-        for i in visibleCards.indices {
-            visibleCards[i].isSelected = false
+    func deselectCards(_ selectedCards: [Card]) {
+        selectedCards.forEach { card in
+            if let index = visibleCards.firstIndex(of: card) {
+                visibleCards[index].isSelected = false
+            }
         }
     }
 
-    func addMoreCards(count: Int = 3) {
-        let selectedCards = visibleCards.filter { $0.isSelected }
-        if selectedCards.count == 3 {
-            self.validSet = isValidSet(selectedCards)
-            showAlertEvaluationCard()
-                let selectedIDs = Set(selectedCards.map { $0.id })
-                if self.validSet {
-                    let indicesToReplace = self.visibleCards.enumerated()
-                        .filter { selectedIDs.contains($0.element.id) }
-                        .map { $0.offset }
-                    self.visibleCards.removeAll { selectedIDs.contains($0.id) }
-                    let cardsToAdd = self.cardsRemaining.prefix(
-                        indicesToReplace.count
-                    )
-                    self.cardsRemaining.removeFirst(
-                        min(indicesToReplace.count, self.cardsRemaining.count)
-                    )
-                    for (i, newCard) in cardsToAdd.enumerated() {
-                        let index = indicesToReplace[i]
-                        self.visibleCards.insert(
-                            newCard,
-                            at: min(index, self.visibleCards.count)
-                        )
-                    }
-                } else {
-                    self.deselectAll()
-                    self.addCards(count: count)
-                }
-                self.setupCardsGrid()
-                self.updateScore()
-            
-        } else {
+    func addMoreCards(count: Int = 3, _ selectedCards: [Card]? = nil) {
+        let selectedCards =
+            selectedCards ?? visibleCards.filter { $0.isSelected }
+        guard selectedCards.count == 3 else {
             addCards(count: count)
-            self.setupCardsGrid()
+            setupCardsGrid()
+            return
         }
+        self.validSet = isValidSet(selectedCards)
+        let selectedIDs = Set(selectedCards.map { $0.id })
+        if self.validSet {
+            let indicesToReplace = self.visibleCards.enumerated()
+                .filter { selectedIDs.contains($0.element.id) }
+                .map { $0.offset }
+            self.visibleCards.removeAll { selectedIDs.contains($0.id) }
+            let cardsToAdd = self.cardsRemaining.prefix(indicesToReplace.count)
+            self.cardsRemaining.removeFirst(
+                min(indicesToReplace.count, self.cardsRemaining.count)
+            )
+            insertCardsReplacingSelected(at: indicesToReplace, with: Array(cardsToAdd))
+        } else {
+            self.deselectCards(selectedCards)
+            self.addCards(count: count)
+        }
+        setupCardsGrid()
+        delegateRemaingCardsCount()
     }
 
     func shuffleVisibleCards() {
@@ -170,6 +167,16 @@ class SetGameLogic {
     }
 
     // MARK: - Private Helper Methods
+    private func insertCardsReplacingSelected(at indices: [Int], with newCards: [Card]) {
+        for (i, newCard) in newCards.enumerated() {
+            let index = indices[i]
+            self.visibleCards.insert(
+                newCard,
+                at: min(index, self.visibleCards.count)
+            )
+        }
+    }
+
     private func addCards(count: Int) {
         cardsRemaining.removeAll { card in
             visibleCards.contains(where: { $0.id == card.id })
@@ -179,6 +186,11 @@ class SetGameLogic {
         }
         visibleCards.append(contentsOf: cardsToAdd)
         cardsRemaining.removeFirst(min(count, cardsRemaining.count))
+        delegateRemaingCardsCount()
+    }
+
+    private func delegateRemaingCardsCount() {
+        print("cards remaining: ", cardsRemaining.count)
         if cardsRemaining.isEmpty {
             self.delegate?.didCardsRemainingOver(to: self.shouldHiddeButton)
         }
@@ -189,22 +201,18 @@ class SetGameLogic {
         delegate?.didUpdateScore(to: score)
     }
 
-    private func showAlertEvaluationCard() {
-            for card in self.visibleCards {
-                guard let cardView = self.cardViewsByID[card.id] else {
-                    continue
-                }
-                if card.isSelected {
-                    let color = self.validSet ? UIColor.green : UIColor.red
-                    cardView.layer.borderColor = color.cgColor
-                    cardView.layer.borderWidth = 3
-                    UIView.animate(withDuration: 0.3) {
-                        cardView.alpha = 0.9
-                        cardView.alpha = 1.0
-                    }
-                }
+    func showAlertEvaluationCard() {
+        for card in self.visibleCards {
+            guard self.cardViewsByID[card.id] != nil else {
+                continue
             }
-        
+            if card.isSelected {
+                let message =
+                    self.validSet
+                    ? "Set valid, keep going!" : "Invalid Set, try again!"
+                delegate?.showSnackbarMessage(message: message)
+            }
+        }
     }
 
     // MARK: - Utility Method for Set Validation
